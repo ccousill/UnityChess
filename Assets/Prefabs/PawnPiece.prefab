@@ -9,7 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5526932685759013587}
-  - component: {fileID: 7777839098589650660}
+  - component: {fileID: 7797126462684550138}
+  - component: {fileID: 8658287998896304664}
   m_Layer: 0
   m_Name: PawnPiece
   m_TagString: Untagged
@@ -33,7 +34,28 @@ Transform:
   - {fileID: 3249044749592181879}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7777839098589650660
+--- !u!65 &7797126462684550138
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5181009544486343228}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6543288, y: 1.2430112, z: 0.64004457}
+  m_Center: {x: 0.020687819, y: -0.009594202, z: 0.0018690228}
+--- !u!114 &8658287998896304664
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,9 +64,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5181009544486343228}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd8e704e86e93a342b89de1b75afef87, type: 3}
+  m_Script: {fileID: 11500000, guid: d8a4b6d74f2a20e4ab6b7f30f7a26b05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pieceType: 
+  pieceColor: {r: 0, g: 0, b: 0, a: 0}
+  currentPosition: {x: 0, y: 0}
 --- !u!1 &6492158840302920924
 GameObject:
   m_ObjectHideFlags: 0

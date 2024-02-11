@@ -4,15 +4,28 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    Vector2Int position = new Vector2Int();
+    ChessBoardManager board;
+    private Material tileMaterial;
+
+    void Awake(){
+        position = new Vector2Int((int)transform.position.x,(int)transform.position.z);
+        board = GameManager.Instance.ChessBoard;
+    }
+    void Start(){
+        tileMaterial = GetComponent<Renderer>().material;
+    }
+    void OnMouseDown(){
+        if(GameManager.Instance.IsClicked){
+            GameManager.Instance.HandleMove(position);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void colorAvailableSpots(){
+        if(tileMaterial.color == Color.red){
+            tileMaterial.color = Color.white;
+        }else{
+            tileMaterial.color = Color.red;
+        }
     }
 }
