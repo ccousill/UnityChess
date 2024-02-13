@@ -12,7 +12,7 @@ public class Pawn : Piece
     public override void FindAvailableSpots(){
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         Piece[,] pieces = board.GetChessBoard();
-        int forwardDirection = (pieceColor == Color.white) ? 1:-1;
+        int forwardDirection = (pieceColor == Color.white) ? 1:-1; 
         List<Vector2Int> moves = new List<Vector2Int>();
         Vector2Int forwardOne = new Vector2Int(currentPosition.x, currentPosition.y + forwardDirection);
         Vector2Int forwardTwo = new Vector2Int(currentPosition.x, currentPosition.y + (2*forwardDirection));
