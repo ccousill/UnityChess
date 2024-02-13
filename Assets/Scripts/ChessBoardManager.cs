@@ -9,7 +9,13 @@ public class ChessBoardManager : MonoBehaviour
 
     private Piece[,] chessboard = new Piece[8, 8];
     private Tile[,] tiles = new Tile[8,8];
-    public Vector2Int[] currentlyAvailableMoves;
+    private Vector2Int[] currentlyAvailableMoves;
+    public Vector2Int[] CurrentlyAvailableMoves{
+        get{return currentlyAvailableMoves;}
+        set{currentlyAvailableMoves = value;}
+    }
+
+    ParticleManager particleManager;
 
     public const int BoardSize = 8;
     Piece currentlySelectedPiece;
@@ -24,6 +30,7 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     void Start(){
+        particleManager = GetComponent<ParticleManager>();
         InitializeChessboard();
     }
 
@@ -51,14 +58,16 @@ public class ChessBoardManager : MonoBehaviour
         piece.IsSelected = true;
         GameManager.Instance.IsClicked = true;
         currentlySelectedPiece.FindAvailableSpots();
+        ToggleParticles();
+
     }
 
     public void DeSelectPiece(Piece piece)
     {
         piece.ToggleLift();
+        DeleteParticles();
         piece.IsSelected = false;
         GameManager.Instance.IsClicked = false;
-        ToggleParticles(currentlyAvailableMoves);
         currentlyAvailableMoves = null;
         currentlySelectedPiece = null;
     }
@@ -81,11 +90,19 @@ public class ChessBoardManager : MonoBehaviour
         }
     }
 
-    public void ToggleParticles(Vector2Int[] currentAvailableMoves){
-        currentlyAvailableMoves = currentAvailableMoves;
-        foreach(Vector2Int position in currentAvailableMoves){
+    public void ToggleParticles(){
+        foreach(Vector2Int position in currentlyAvailableMoves){
             Tile tile = tiles[(int)position.x,(int)position.y];
-            tile.colorAvailableSpots();
+            particleManager.PlayParticles(tile);
+            // tile.colorAvailableSpots();
+        }
+    }
+
+    public void DeleteParticles(){
+        foreach(Vector2Int position in currentlyAvailableMoves){
+            Tile tile = tiles[(int)position.x,(int)position.y];
+            particleManager.DeleteParticles(tile);
+            // tile.colorAvailableSpots();
         }
     }
     

@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
     private bool isClicked;
+    private int currentPlayerIndex = 0;
+    public List<Player> players = new List<Player>();
+
     ChessBoardManager chessBoard;
     public ChessBoardManager ChessBoard{
         get {return chessBoard;}
@@ -44,6 +47,24 @@ public class GameManager : MonoBehaviour
         isClicked = false;
         chessBoard = FindObjectOfType<ChessBoardManager>();
         currentlySelectedPiece = chessBoard.CurrentlySelectedPiece;
+    }
+
+    void Start(){
+
+        //player 1 will be white
+        players.Add(new Player("White"));
+
+        //player 2 will be black
+        players.Add(new Player("Black"));
+    }
+
+    void StartPlayerTurn(){
+        Debug.Log("start turn");
+    }
+
+    public void EndPlayerTurn(){
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+        StartPlayerTurn();
     }
 
 

@@ -35,7 +35,7 @@ public abstract class Piece : MonoBehaviour
         }
     }
     void setColor(){
-        if(transform.parent.parent.tag == "Black"){
+        if(transform.parent.parent.tag == "Black" || transform.parent.tag == "Black"){
             pieceColor = Color.black;
         }else{
             pieceColor = Color.white;
