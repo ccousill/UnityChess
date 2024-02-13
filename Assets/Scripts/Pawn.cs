@@ -19,7 +19,7 @@ public class Pawn : Piece
         Vector2Int forwardOneLeft = new Vector2Int(currentPosition.x -1, currentPosition.y + forwardDirection);
         Vector2Int forwardOneRight = new Vector2Int(currentPosition.x+ 1, currentPosition.y + forwardDirection);
 
-        if(pieces[forwardOne.x,forwardOne.y] == null){
+        if(IsWithinBounds(forwardOne.x,forwardOne.y) && pieces[forwardOne.x,forwardOne.y] == null){
             if(pieces[forwardTwo.x,forwardTwo.y] == null && CanMoveDouble()){
                     moves.Add(forwardTwo);
             }
@@ -27,10 +27,10 @@ public class Pawn : Piece
         }
 
         // Add additional checks for capturing opponent pieces diagonally
-        if(pieces[forwardOneLeft.x,forwardOneLeft.y] != null && pieces[forwardOneLeft.x,forwardOneLeft.y].pieceColor != pieceColor){
+        if(IsWithinBounds(forwardOneLeft.x,forwardOneLeft.y) && pieces[forwardOneLeft.x,forwardOneLeft.y] != null && pieces[forwardOneLeft.x,forwardOneLeft.y].pieceColor != pieceColor){
             moves.Add(forwardOneLeft);
         }
-        if(pieces[forwardOneRight.x,forwardOneRight.y] != null && pieces[forwardOneRight.x,forwardOneRight.y].pieceColor != pieceColor){
+        if(IsWithinBounds(forwardOneRight.x,forwardOneRight.y) && pieces[forwardOneRight.x,forwardOneRight.y] != null && pieces[forwardOneRight.x,forwardOneRight.y].pieceColor != pieceColor){
             moves.Add(forwardOneRight);
         }
         // Filter out moves that are outside the board boundaries

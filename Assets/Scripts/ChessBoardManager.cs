@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChessBoardManager : MonoBehaviour
@@ -23,10 +24,10 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     void Start(){
-        IntitializeChessboard();
+        InitializeChessboard();
     }
 
-    void IntitializeChessboard(){
+    void InitializeChessboard(){
         Piece[] pieces = FindObjectsOfType<Piece>();
             foreach(Piece piece in pieces){
                 int xPosition = piece.currentPosition.x;
@@ -67,6 +68,10 @@ public class ChessBoardManager : MonoBehaviour
         if (currentlySelectedPiece != null)
         {
             if(currentlySelectedPiece.IsValid(position)){
+                if(GetPieceByCoordinates(position) != null && IsTakablePiece(GetPieceByCoordinates(position))){
+                    Piece takenPiece = GetPieceByCoordinates(position);
+                    TakePiece(takenPiece);
+                }
                 Vector2Int oldPosition = currentlySelectedPiece.currentPosition;
                 currentlySelectedPiece.Move(position);
                 chessboard[position.x,position.y] = currentlySelectedPiece;
@@ -82,5 +87,18 @@ public class ChessBoardManager : MonoBehaviour
             Tile tile = tiles[(int)position.x,(int)position.y];
             tile.colorAvailableSpots();
         }
+    }
+    
+    public void TakePiece(Piece takenPiece){
+        chessboard[takenPiece.currentPosition.x,takenPiece.currentPosition.y] = null;
+        Destroy(takenPiece.gameObject);
+    }
+
+    public bool IsTakablePiece(Piece piece){{
+        return currentlySelectedPiece.pieceColor != piece.pieceColor;
+    }}
+
+    public Piece GetPieceByCoordinates(Vector2Int position){
+        return chessboard[position.x,position.y];
     }
 }
