@@ -58,7 +58,7 @@ public class ChessBoardManager : MonoBehaviour
         piece.IsSelected = true;
         GameManager.Instance.IsClicked = true;
         currentlySelectedPiece.FindAvailableSpots();
-        ToggleParticles();
+        ShowParticles();
     }
 
     public void DeSelectPiece(Piece piece)
@@ -89,7 +89,7 @@ public class ChessBoardManager : MonoBehaviour
         }
     }
 
-    public void ToggleParticles(){
+    public void ShowParticles(){
         if(currentlyAvailableMoves != null){
             foreach(Vector2Int position in currentlyAvailableMoves){
                 Tile tile = tiles[(int)position.x,(int)position.y];

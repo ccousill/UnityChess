@@ -9,7 +9,6 @@ public abstract class Piece : MonoBehaviour
     public Vector2Int currentPosition;
     public Vector2Int[] currentAvailableMoves;
     private bool isSelected = false;
-    // public abstract bool IsValid(Vector2Int position);
     public abstract void FindAvailableSpots();
     public bool IsSelected{
         get{return isSelected;}

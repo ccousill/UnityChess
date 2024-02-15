@@ -13,7 +13,6 @@ public class Rook : Piece
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
-        int forwardDirection = (pieceColor == Color.white) ? 1 : -1;
         List<Vector2Int> moves = new List<Vector2Int>();
         int xPiecePosition = currentPosition.x;
         int yPiecePosition = currentPosition.y;
