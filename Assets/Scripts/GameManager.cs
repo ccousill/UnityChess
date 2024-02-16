@@ -89,5 +89,4 @@ public class GameManager : MonoBehaviour
     {
         chessBoard.CompleteTurn(position);
     }
-
 }

@@ -10,6 +10,10 @@ public abstract class Piece : MonoBehaviour
     public Vector2Int[] currentAvailableMoves;
     private bool isSelected = false;
     public abstract void FindAvailableSpots();
+    private bool hasMoved;
+    public bool HasMoved{
+        get{return hasMoved;}
+    }
     public bool IsSelected{
         get{return isSelected;}
         set{isSelected = value;}
@@ -17,10 +21,14 @@ public abstract class Piece : MonoBehaviour
 
     void Awake(){
         currentPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x),Mathf.RoundToInt(transform.position.z));
+        hasMoved = false;
         setColor();
     }
     public void Move(Vector2Int newPosition){
         transform.position = new Vector3(newPosition.x,transform.position.y,newPosition.y);
+        if(!hasMoved){
+            hasMoved = true;
+        }
         currentPosition = newPosition;
     }
 
