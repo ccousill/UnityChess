@@ -21,6 +21,8 @@ public abstract class Piece : MonoBehaviour
     public bool HasMoved => hasMoved;
     public Vector2Int CurrentPosition => currentPosition;
     public Vector2Int InitialPosition => initialPosition;
+
+    public Player Owner{get;set;}
     public bool IsSelected{
         get{return isSelected;}
         set{isSelected = value;}
@@ -64,14 +66,6 @@ public abstract class Piece : MonoBehaviour
         currentPosition = newPosition;
     }
 
-    public void SetOwner(Player player){
-        owner = player;
-    }
-
-    public Player GetOwner(){
-        return owner;
-    }
-
     public void ToggleLift(){
         isSelected = !isSelected;
         if(isSelected){
@@ -86,14 +80,14 @@ public abstract class Piece : MonoBehaviour
             for(int i = 0;i<transform.childCount;i++){
                 childMeshRenderer[i].material = blackMaterial; 
             }
-            SetOwner(GameManager.Instance.Players[1]);
+            Owner = GameManager.Instance.Players[1];
 
         }else{
             pieceColor = Color.white; 
             for(int i = 0;i<transform.childCount;i++){
                 childMeshRenderer[i].material = whiteMaterial; 
             } 
-            SetOwner(GameManager.Instance.Players[0]);
+            Owner = GameManager.Instance.Players[0];
         }
     }
     protected bool IsWithinBounds(int x, int y)

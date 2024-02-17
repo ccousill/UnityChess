@@ -33,7 +33,6 @@ public class Pawn : Piece
             }
         }
 
-        // Add additional checks for capturing opponent pieces diagonally
         if (IsWithinBounds(forwardOneLeft.x, forwardOneLeft.y) && pieces[forwardOneLeft.x, forwardOneLeft.y] != null && pieces[forwardOneLeft.x, forwardOneLeft.y].PieceColor != PieceColor)
         {
             moves.Add(forwardOneLeft);
@@ -42,9 +41,7 @@ public class Pawn : Piece
         {
             moves.Add(forwardOneRight);
         }
-        // Filter out moves that are outside the board boundaries
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        // Visualize or use the valid moves as needed
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 

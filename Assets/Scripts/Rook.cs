@@ -15,11 +15,9 @@ public class Rook : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 0); // Check right
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 0); // Check left
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, 1); // Check up
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, -1);
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, -1);//Check down
 
-        // Filter out moves that are outside the board boundaries
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        // Visualize or use the valid moves as needed
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 

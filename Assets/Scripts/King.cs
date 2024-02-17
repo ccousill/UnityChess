@@ -18,9 +18,7 @@ public class King : Piece
         {
             CheckCastle(board, xPiecePosition, yPiecePosition, moves);
         }
-        // Filter out moves that are outside the board boundaries
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        // Visualize or use the valid moves as needed
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 

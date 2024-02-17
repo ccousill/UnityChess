@@ -12,18 +12,17 @@ public class Queen : Piece
         int xPiecePosition = CurrentPosition.x;
         int yPiecePosition = CurrentPosition.y;
 
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 0); // Check right
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 0); // Check left
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, 1); // Check up
+        //combine both rook and bishop checks
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 0); 
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 0); 
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, 1); 
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, -1);
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 1); // Check up right
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 1); // Check up left
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, -1); // Check down right
-        CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, -1); //check down left
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 1); 
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 1); 
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, -1); 
+        CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, -1); 
 
-        // Filter out moves that are outside the board boundaries
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        // Visualize or use the valid moves as needed
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 

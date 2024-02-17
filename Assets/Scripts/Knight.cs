@@ -17,9 +17,7 @@ public class Knight : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, -1); // Check down left
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 1); // check up left
 
-        // Filter out moves that are outside the board boundaries
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        // Visualize or use the valid moves as needed
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 
