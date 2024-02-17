@@ -21,9 +21,10 @@ public class Pawn : Piece
         Vector2Int forwardOneLeft = new Vector2Int(currentPosition.x - 1, currentPosition.y + forwardDirection);
         Vector2Int forwardOneRight = new Vector2Int(currentPosition.x + 1, currentPosition.y + forwardDirection);
 
+
         if (IsWithinBounds(forwardOne.x, forwardOne.y) && pieces[forwardOne.x, forwardOne.y] == null)
         {
-            if (pieces[forwardTwo.x, forwardTwo.y] == null && CanMoveDouble())
+            if (IsWithinBounds(forwardTwo.x, forwardTwo.y) && pieces[forwardTwo.x, forwardTwo.y] == null && CanMoveDouble())
             {
                 moves.Add(forwardTwo);
             }

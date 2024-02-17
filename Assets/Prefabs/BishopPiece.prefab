@@ -150,6 +150,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 981137daf4988a24f898839a49ab7938, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pieceType: 
   pieceColor: {r: 0, g: 0, b: 0, a: 0}
+  blackMaterial: {fileID: 2100000, guid: e0b243211cac5c34bb7ab82363a66a81, type: 2}
+  whiteMaterial: {fileID: 2100000, guid: 41b6d86097c648a478edcd7617b3965d, type: 2}
   currentPosition: {x: 0, y: 0}
+  currentAvailableMoves: []

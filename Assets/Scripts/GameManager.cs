@@ -10,8 +10,14 @@ public class GameManager : MonoBehaviour
     private bool isClicked;
     private int currentPlayerIndex = 0;
     public List<Player> players = new List<Player>();
+    public GameObject rookPrefab;  // Assign your Rook prefab in the Unity Editor
+    public GameObject queenPrefab;
+    public GameObject knightPrefab;  // Assign your Rook prefab in the Unity Editor
+    public GameObject bishopPrefab;
+    private Piece lastMovedPiece;
 
     ChessBoardManager chessBoard;
+    PawnPromotionUIManager pawnPromotionUI;
     public ChessBoardManager ChessBoard{
         get {return chessBoard;}
     }
@@ -20,6 +26,12 @@ public class GameManager : MonoBehaviour
         get { return isClicked; }
         set{isClicked = value;}
     }
+
+    public enum GameState{
+        Normal,
+        PawnPromotion
+    }
+    private GameState currentGameState = GameState.Normal;
 
     Piece currentlySelectedPiece;
     // Property to access the GameManager instance
@@ -46,7 +58,9 @@ public class GameManager : MonoBehaviour
     {
         isClicked = false;
         chessBoard = FindObjectOfType<ChessBoardManager>();
+        pawnPromotionUI = FindObjectOfType<PawnPromotionUIManager>();
         currentlySelectedPiece = chessBoard.CurrentlySelectedPiece;
+        pawnPromotionUI.HidePawnPromotionUI();
     }
 
     void Start(){
@@ -87,6 +101,76 @@ public class GameManager : MonoBehaviour
     
     public void HandleMove(Vector2Int position)
     {
-        chessBoard.CompleteTurn(position);
+        if(currentGameState == GameState.Normal){
+            Piece pieceMoved = chessBoard.CompleteTurn(position);
+            lastMovedPiece = pieceMoved;
+            if(lastMovedPiece is Pawn){
+                Pawn piece = (Pawn) pieceMoved;
+                if(piece.HasReachedEnd()){
+                    currentGameState = GameState.PawnPromotion;
+                    PawnPromotionUI();
+                }
+            }
+        }
+
+
     }
+
+    public void PawnPromotionUI(){
+        pawnPromotionUI.ShowPawnPromotionUI();
+    }
+
+    public void PawnPromotion(string selectedPieceType){
+        Piece newPiece = InstantiatePiece(selectedPieceType);
+        chessBoard.UpdateBoard(newPiece,new Vector2Int(newPiece.currentPosition.x,newPiece.currentPosition.y));
+        Destroy(lastMovedPiece.gameObject);
+        currentGameState = GameState.Normal;
+        pawnPromotionUI.HidePawnPromotionUI();
+    }
+
+    private Piece InstantiatePiece(string pieceType){
+        GameObject piecePrefab = GetPrefabByType(pieceType);
+        string playerColor = GetColorName(lastMovedPiece.pieceColor);
+        string parentPath = $"Game/Pieces/{playerColor}/{pieceType}s";
+        GameObject parentObject = GameObject.Find(parentPath);
+        GameObject newPieceObject = Instantiate(piecePrefab,new Vector3(lastMovedPiece.currentPosition.x,.75f,lastMovedPiece.currentPosition.y),Quaternion.identity);
+        newPieceObject.transform.SetParent(parentObject.transform);
+        Debug.Log("My new parent" + newPieceObject.transform.parent);
+        Piece newPiece = newPieceObject.GetComponent<Piece>();
+        return newPiece;
+    }
+
+    private GameObject GetPrefabByType(string pieceType){
+        switch (pieceType)
+        {
+            case "Rook":
+                return rookPrefab;
+            case "Queen":
+                return queenPrefab;
+            case "Knight":
+                return knightPrefab;
+            case "Bishop":
+                return bishopPrefab;
+            // ... other cases for different piece types
+            default:
+                return null;
+        }
+    }
+
+    private string GetColorName(Color color)
+{
+    // Check if the color is closer to white or black based on the tolerance
+    if (Mathf.Approximately(color.r, 1f) && Mathf.Approximately(color.g, 1f) && Mathf.Approximately(color.b, 1f) && Mathf.Approximately(color.a, 1f))
+    {
+        return "White";
+    }
+    else if (Mathf.Approximately(color.r, 0f) && Mathf.Approximately(color.g, 0f) && Mathf.Approximately(color.b, 0f) && Mathf.Approximately(color.a, 1f))
+    {
+        return "Black";
+    }
+    else
+    {
+        return "Unknown"; // You might want to handle other cases accordingly
+    }
+}
 }

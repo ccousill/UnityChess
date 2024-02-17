@@ -85,8 +85,9 @@ public class ChessBoardManager : MonoBehaviour
         currentlySelectedPiece = null;
     }
 
-    public void CompleteTurn(Vector2Int position)
+    public Piece CompleteTurn(Vector2Int position)
     {
+        Piece pieceMoved = currentlySelectedPiece;
         enPassantablePiece = null;
         int forwardDirection = (currentlySelectedPiece.pieceColor == Color.white) ? 1 : -1;
         if (currentlySelectedPiece != null)
@@ -102,10 +103,12 @@ public class ChessBoardManager : MonoBehaviour
                     TakePiece(takenPiece);
                 }
 
+                
                 UpdateBoard(currentlySelectedPiece, position);
                 DeSelectPiece(currentlySelectedPiece);
             }
         }
+        return pieceMoved;
     }
 
     private void CheckCastle(Vector2Int position)
@@ -184,7 +187,7 @@ public class ChessBoardManager : MonoBehaviour
         return chessboard[position.x, position.y];
     }
 
-    private void UpdateBoard(Piece piece, Vector2Int newPos)
+    public void UpdateBoard(Piece piece, Vector2Int newPos)
     {
         Vector2Int oldPosition = piece.currentPosition;
         piece.Move(newPos);

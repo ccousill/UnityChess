@@ -6,6 +6,9 @@ using UnityEngine;
 public abstract class Piece : MonoBehaviour
 {   
     public Color pieceColor;
+    private MeshRenderer childMeshRenderer;
+    [SerializeField] private Material blackMaterial;
+    [SerializeField] private Material whiteMaterial;
     public Vector2Int currentPosition;
     public Vector2Int[] currentAvailableMoves;
     private bool isSelected = false;
@@ -22,8 +25,13 @@ public abstract class Piece : MonoBehaviour
     void Awake(){
         currentPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x),Mathf.RoundToInt(transform.position.z));
         hasMoved = false;
+    }
+    void Start(){
+        Transform childTransform = transform.GetChild(0);
+        childMeshRenderer = childTransform.GetComponent<MeshRenderer>();
         setColor();
     }
+    
     public void Move(Vector2Int newPosition){
         transform.position = new Vector3(newPosition.x,transform.position.y,newPosition.y);
         if(!hasMoved){
@@ -44,9 +52,13 @@ public abstract class Piece : MonoBehaviour
     void setColor(){
         if(transform.parent.parent.tag == "Black" || transform.parent.tag == "Black"){
             pieceColor = Color.black;
+            childMeshRenderer.material = blackMaterial;
+
         }else{
-            pieceColor = Color.white;
+            pieceColor = Color.white; 
+            childMeshRenderer.material = whiteMaterial; 
         }
+        
     }
     public bool IsWithinBounds(int x, int y)
     {
