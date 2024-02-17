@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -19,6 +20,8 @@ public class GameManager : MonoBehaviour
     public GameObject queenPrefab;
     public GameObject knightPrefab;
     public GameObject bishopPrefab;
+
+    public bool GameOver{get;set;}
     public ChessBoardManager ChessBoard
     {
         get { return chessBoard; }
@@ -60,6 +63,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         isClicked = false;
+        GameOver = false;
         chessBoard = FindObjectOfType<ChessBoardManager>();
         pawnPromotionUI = FindObjectOfType<PawnPromotionUIManager>();
         pawnPromotionUI.HidePawnPromotionUI();
@@ -133,8 +137,10 @@ public class GameManager : MonoBehaviour
         {
             Piece pieceMoved = chessBoard.CompleteTurn(position);
             lastMovedPiece = pieceMoved;
-            
-            if (lastMovedPiece is Pawn)
+            if(GameOver){
+                GameOverSequence();
+            }
+            else if (lastMovedPiece is Pawn)
             {
                 Pawn piece = (Pawn)pieceMoved;
                 if (piece.HasReachedEnd())
@@ -149,6 +155,10 @@ public class GameManager : MonoBehaviour
     public void PawnPromotionUI()
     {
         pawnPromotionUI.ShowPawnPromotionUI();
+    }
+    private void GameOverSequence(){
+        Debug.Log("Game Over!");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void PawnPromotion(string selectedPieceType)

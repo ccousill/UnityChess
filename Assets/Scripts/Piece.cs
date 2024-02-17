@@ -14,11 +14,13 @@ public abstract class Piece : MonoBehaviour
     [SerializeField] private Material blackMaterial;
     [SerializeField] private Material whiteMaterial;
     private Vector2Int currentPosition;
+    private Vector2Int initialPosition;
     
     public abstract void FindAvailableSpots();
     public Color PieceColor => pieceColor;
     public bool HasMoved => hasMoved;
     public Vector2Int CurrentPosition => currentPosition;
+    public Vector2Int InitialPosition => initialPosition;
     public bool IsSelected{
         get{return isSelected;}
         set{isSelected = value;}
@@ -31,6 +33,7 @@ public abstract class Piece : MonoBehaviour
 
     protected virtual void Awake(){
         currentPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x),Mathf.RoundToInt(transform.position.z));
+        initialPosition = currentPosition;
         hasMoved = false;
     }
     protected virtual void Start(){

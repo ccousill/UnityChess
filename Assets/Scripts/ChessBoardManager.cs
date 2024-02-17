@@ -100,7 +100,11 @@ public class ChessBoardManager : MonoBehaviour
                 if (GetPieceByCoordinates(position) != null && IsTakablePiece(GetPieceByCoordinates(position)))
                 {
                     Piece takenPiece = GetPieceByCoordinates(position);
+                    if(takenPiece is King){
+                        GameManager.Instance.GameOver = true;
+                    }
                     TakePiece(takenPiece);
+                    GameManager.Instance.GetCurrentPlayer().CapturedPieces.Add(takenPiece);
                 }
 
 
