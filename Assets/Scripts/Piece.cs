@@ -40,11 +40,14 @@ public abstract class Piece : MonoBehaviour
         setColor();
     }
 
-    void OnMouseDown()
+    protected virtual void OnMouseDown()
     {
         if(GameManager.Instance.GetCurrentPlayer().PlayerColor == GameManager.Instance.GetColorName(pieceColor)){
             GameManager.Instance.OnChessPieceClicked(this);
-        }else{
+        }else if(GameManager.Instance.IsClicked){
+            GameManager.Instance.HandleMove(currentPosition);
+        }
+        else{
             Debug.Log("It's not your turn!");
         }
         

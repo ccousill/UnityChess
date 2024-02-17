@@ -106,6 +106,7 @@ public class ChessBoardManager : MonoBehaviour
 
                 UpdateBoard(currentlySelectedPiece, position);
                 DeSelectPiece(currentlySelectedPiece);
+                GameManager.Instance.EndPlayerTurn();
             }
         }
         return pieceMoved;
