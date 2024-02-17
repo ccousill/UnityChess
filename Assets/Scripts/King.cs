@@ -7,26 +7,21 @@ using UnityEngine;
 public class King : Piece
 {
     bool inCheck = false;
-    void OnMouseDown()
-    {
-        GameManager.Instance.OnChessPieceClicked(this);
-    }
-
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
-        int xPiecePosition = currentPosition.x;
-        int yPiecePosition = currentPosition.y;
+        int xPiecePosition = CurrentPosition.x;
+        int yPiecePosition = CurrentPosition.y;
         CheckAround(board, xPiecePosition, yPiecePosition, moves);
         if (!HasMoved)
         {
             CheckCastle(board, xPiecePosition, yPiecePosition, moves);
         }
         // Filter out moves that are outside the board boundaries
-        currentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
+        CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
         // Visualize or use the valid moves as needed
-        board.CurrentlyAvailableMoves = currentAvailableMoves;
+        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 
     void CheckAround(ChessBoardManager board, int xPiecePosition, int yPiecePosition, List<Vector2Int> moves)
@@ -60,27 +55,27 @@ public class King : Piece
         int rightRookX = 7;
         for (int i = xPiecePosition - 1; i > leftRookX; i--)
         {
-            if (board.GetPieceByCoordinates(new Vector2Int(i, currentPosition.y)) != null)
+            if (board.GetPieceByCoordinates(new Vector2Int(i, CurrentPosition.y)) != null)
             {
                 isBlocked = true;
             }
         }
-        Piece leftRook = board.GetPieceByCoordinates(new Vector2Int(leftRookX,currentPosition.y));
+        Piece leftRook = board.GetPieceByCoordinates(new Vector2Int(leftRookX,CurrentPosition.y));
         if(!isBlocked && leftRook is Rook && !leftRook.HasMoved){
-            moves.Add(new Vector2Int(currentPosition.x - 2,currentPosition.y));
+            moves.Add(new Vector2Int(CurrentPosition.x - 2,CurrentPosition.y));
         }
 
         isBlocked = false;
         for (int i = xPiecePosition + 1; i < rightRookX ; i++)
         {
-            if (board.GetPieceByCoordinates(new Vector2Int(i, currentPosition.y)) != null)
+            if (board.GetPieceByCoordinates(new Vector2Int(i, CurrentPosition.y)) != null)
             {
                 isBlocked = true;
             }
         }
-        Piece rightRook = board.GetPieceByCoordinates(new Vector2Int(rightRookX,currentPosition.y));
+        Piece rightRook = board.GetPieceByCoordinates(new Vector2Int(rightRookX,CurrentPosition.y));
         if(!isBlocked && rightRook is Rook && !rightRook.HasMoved){
-            moves.Add(new Vector2Int(currentPosition.x + 2,currentPosition.y));
+            moves.Add(new Vector2Int(CurrentPosition.x + 2,CurrentPosition.y));
         }
     }
 }

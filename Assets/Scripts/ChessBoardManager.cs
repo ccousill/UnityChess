@@ -26,7 +26,7 @@ public class ChessBoardManager : MonoBehaviour
     ParticleManager particleManager;
 
     public const int BoardSize = 8;
-    Piece currentlySelectedPiece;
+    private Piece currentlySelectedPiece;
     public Piece CurrentlySelectedPiece
     {
         get { return currentlySelectedPiece; }
@@ -51,8 +51,8 @@ public class ChessBoardManager : MonoBehaviour
         Piece[] pieces = FindObjectsOfType<Piece>();
         foreach (Piece piece in pieces)
         {
-            int xPosition = piece.currentPosition.x;
-            int yPosition = piece.currentPosition.y;
+            int xPosition = piece.CurrentPosition.x;
+            int yPosition = piece.CurrentPosition.y;
             chessboard[xPosition, yPosition] = piece;
         }
 
@@ -89,7 +89,7 @@ public class ChessBoardManager : MonoBehaviour
     {
         Piece pieceMoved = currentlySelectedPiece;
         enPassantablePiece = null;
-        int forwardDirection = (currentlySelectedPiece.pieceColor == Color.white) ? 1 : -1;
+        int forwardDirection = (currentlySelectedPiece.PieceColor == Color.white) ? 1 : -1;
         if (currentlySelectedPiece != null)
         {
             if (currentlySelectedPiece.IsValid(position))
@@ -103,7 +103,7 @@ public class ChessBoardManager : MonoBehaviour
                     TakePiece(takenPiece);
                 }
 
-                
+
                 UpdateBoard(currentlySelectedPiece, position);
                 DeSelectPiece(currentlySelectedPiece);
             }
@@ -115,16 +115,16 @@ public class ChessBoardManager : MonoBehaviour
     {
         if (currentlySelectedPiece is King)
         {
-            if ((position.x == currentlySelectedPiece.currentPosition.x - 2))
+            if ((position.x == currentlySelectedPiece.CurrentPosition.x - 2))
             {
                 //handle left castle
-                Piece leftRook = GetPieceByCoordinates(new Vector2Int(0, currentlySelectedPiece.currentPosition.y));
+                Piece leftRook = GetPieceByCoordinates(new Vector2Int(0, currentlySelectedPiece.CurrentPosition.y));
                 UpdateBoard(leftRook, new Vector2Int(position.x + 1, position.y));
             }
-            else if ((position.x == currentlySelectedPiece.currentPosition.x + 2))
+            else if ((position.x == currentlySelectedPiece.CurrentPosition.x + 2))
             {
                 //handle right castle
-                Piece rightRook = GetPieceByCoordinates(new Vector2Int(7, currentlySelectedPiece.currentPosition.y));
+                Piece rightRook = GetPieceByCoordinates(new Vector2Int(7, currentlySelectedPiece.CurrentPosition.y));
                 UpdateBoard(rightRook, new Vector2Int(position.x - 1, position.y));
             }
         }
@@ -134,11 +134,11 @@ public class ChessBoardManager : MonoBehaviour
     {
         if (currentlySelectedPiece is Pawn)
         {
-            if (currentlySelectedPiece.currentPosition.y + 2 == position.y || currentlySelectedPiece.currentPosition.y - 2 == position.y)
+            if (currentlySelectedPiece.CurrentPosition.y + 2 == position.y || currentlySelectedPiece.CurrentPosition.y - 2 == position.y)
             {
                 EnPessantablePiece = currentlySelectedPiece;
             }
-            if (GetPieceByCoordinates(position) == null && position.y == currentlySelectedPiece.currentPosition.y + forwardDirection && (currentlySelectedPiece.currentPosition.x == position.x + 1 || currentlySelectedPiece.currentPosition.x == position.x - 1))
+            if (GetPieceByCoordinates(position) == null && position.y == currentlySelectedPiece.CurrentPosition.y + forwardDirection && (currentlySelectedPiece.CurrentPosition.x == position.x + 1 || currentlySelectedPiece.CurrentPosition.x == position.x - 1))
             {
                 TakePiece(GetPieceByCoordinates(new Vector2Int(position.x, position.y - forwardDirection)));
             }
@@ -171,27 +171,40 @@ public class ChessBoardManager : MonoBehaviour
 
     public void TakePiece(Piece takenPiece)
     {
-        chessboard[takenPiece.currentPosition.x, takenPiece.currentPosition.y] = null;
+        chessboard[takenPiece.CurrentPosition.x, takenPiece.CurrentPosition.y] = null;
         Destroy(takenPiece.gameObject);
     }
 
     public bool IsTakablePiece(Piece piece)
     {
         {
-            return currentlySelectedPiece.pieceColor != piece.pieceColor;
+            return currentlySelectedPiece.PieceColor != piece.PieceColor;
         }
     }
 
     public Piece GetPieceByCoordinates(Vector2Int position)
     {
-        return chessboard[position.x, position.y];
+        if (position.x >= 0 && position.x < BoardSize && position.y >= 0 && position.y < BoardSize)
+        {
+            return chessboard[position.x, position.y];
+        }
+
+        return null;
     }
 
     public void UpdateBoard(Piece piece, Vector2Int newPos)
     {
-        Vector2Int oldPosition = piece.currentPosition;
+        Vector2Int oldPosition = piece.CurrentPosition;
         piece.Move(newPos);
         chessboard[newPos.x, newPos.y] = piece;
-        chessboard[oldPosition.x, oldPosition.y] = null;
+        if (oldPosition.x == newPos.x && oldPosition.y == newPos.y)
+        {
+
+        }
+        else
+        {
+            chessboard[oldPosition.x, oldPosition.y] = null;
+        }
+
     }
 }

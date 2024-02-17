@@ -5,16 +5,12 @@ using UnityEngine;
 
 public class Queen : Piece
 {
-    void OnMouseDown(){
-        GameManager.Instance.OnChessPieceClicked(this);
-    }
-    
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
-        int xPiecePosition = currentPosition.x;
-        int yPiecePosition = currentPosition.y;
+        int xPiecePosition = CurrentPosition.x;
+        int yPiecePosition = CurrentPosition.y;
 
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 0); // Check right
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 0); // Check left
@@ -26,9 +22,9 @@ public class Queen : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, -1); //check down left
 
         // Filter out moves that are outside the board boundaries
-        currentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
+        CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
         // Visualize or use the valid moves as needed
-        board.CurrentlyAvailableMoves = currentAvailableMoves;
+        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 
     private void CheckDirection(ChessBoardManager board, List<Vector2Int> moves, int x, int y, int xDirection, int yDirection)

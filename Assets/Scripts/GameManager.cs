@@ -9,15 +9,16 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     private bool isClicked;
     private int currentPlayerIndex = 0;
-    public List<Player> players = new List<Player>();
-    public GameObject rookPrefab;  // Assign your Rook prefab in the Unity Editor
-    public GameObject queenPrefab;
-    public GameObject knightPrefab;  // Assign your Rook prefab in the Unity Editor
-    public GameObject bishopPrefab;
+    private List<Player> players = new List<Player>();
+    public List<Player> Players => players;
     private Piece lastMovedPiece;
 
-    ChessBoardManager chessBoard;
-    PawnPromotionUIManager pawnPromotionUI;
+    private ChessBoardManager chessBoard;
+    private PawnPromotionUIManager pawnPromotionUI;
+    public GameObject rookPrefab; 
+    public GameObject queenPrefab;
+    public GameObject knightPrefab;  
+    public GameObject bishopPrefab;
     public ChessBoardManager ChessBoard{
         get {return chessBoard;}
     }
@@ -33,7 +34,7 @@ public class GameManager : MonoBehaviour
     }
     private GameState currentGameState = GameState.Normal;
 
-    Piece currentlySelectedPiece;
+    
     // Property to access the GameManager instance
     public static GameManager Instance
     {
@@ -59,21 +60,20 @@ public class GameManager : MonoBehaviour
         isClicked = false;
         chessBoard = FindObjectOfType<ChessBoardManager>();
         pawnPromotionUI = FindObjectOfType<PawnPromotionUIManager>();
-        currentlySelectedPiece = chessBoard.CurrentlySelectedPiece;
         pawnPromotionUI.HidePawnPromotionUI();
+        InitializePlayers();
     }
 
-    void Start(){
-
+    void InitializePlayers(){
         //player 1 will be white
         players.Add(new Player("White"));
-
         //player 2 will be black
         players.Add(new Player("Black"));
+        StartPlayerTurn();
     }
 
     void StartPlayerTurn(){
-        Debug.Log("start turn");
+        Debug.Log($"It is currently Player {players[currentPlayerIndex].PlayerColor}'s turn");
     }
 
     public void EndPlayerTurn(){
@@ -81,10 +81,14 @@ public class GameManager : MonoBehaviour
         StartPlayerTurn();
     }
 
+    public Player GetCurrentPlayer(){
+        return players[currentPlayerIndex];
+    }
+
 
     public void OnChessPieceClicked(Piece clickedPiece)
     {
-        currentlySelectedPiece = chessBoard.CurrentlySelectedPiece;
+        Piece currentlySelectedPiece = chessBoard.CurrentlySelectedPiece;
         if (ReferenceEquals(clickedPiece, currentlySelectedPiece))
         {
             chessBoard.DeSelectPiece(clickedPiece);
@@ -111,9 +115,8 @@ public class GameManager : MonoBehaviour
                     PawnPromotionUI();
                 }
             }
+            EndPlayerTurn();
         }
-
-
     }
 
     public void PawnPromotionUI(){
@@ -122,7 +125,7 @@ public class GameManager : MonoBehaviour
 
     public void PawnPromotion(string selectedPieceType){
         Piece newPiece = InstantiatePiece(selectedPieceType);
-        chessBoard.UpdateBoard(newPiece,new Vector2Int(newPiece.currentPosition.x,newPiece.currentPosition.y));
+        chessBoard.UpdateBoard(newPiece,new Vector2Int(newPiece.CurrentPosition.x,newPiece.CurrentPosition.y));
         Destroy(lastMovedPiece.gameObject);
         currentGameState = GameState.Normal;
         pawnPromotionUI.HidePawnPromotionUI();
@@ -130,12 +133,11 @@ public class GameManager : MonoBehaviour
 
     private Piece InstantiatePiece(string pieceType){
         GameObject piecePrefab = GetPrefabByType(pieceType);
-        string playerColor = GetColorName(lastMovedPiece.pieceColor);
+        string playerColor = GetColorName(lastMovedPiece.PieceColor);
         string parentPath = $"Game/Pieces/{playerColor}/{pieceType}s";
         GameObject parentObject = GameObject.Find(parentPath);
-        GameObject newPieceObject = Instantiate(piecePrefab,new Vector3(lastMovedPiece.currentPosition.x,.75f,lastMovedPiece.currentPosition.y),Quaternion.identity);
+        GameObject newPieceObject = Instantiate(piecePrefab,new Vector3(lastMovedPiece.CurrentPosition.x,.75f,lastMovedPiece.CurrentPosition.y),Quaternion.identity);
         newPieceObject.transform.SetParent(parentObject.transform);
-        Debug.Log("My new parent" + newPieceObject.transform.parent);
         Piece newPiece = newPieceObject.GetComponent<Piece>();
         return newPiece;
     }
@@ -157,7 +159,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private string GetColorName(Color color)
+    public string GetColorName(Color color)
 {
     // Check if the color is closer to white or black based on the tolerance
     if (Mathf.Approximately(color.r, 1f) && Mathf.Approximately(color.g, 1f) && Mathf.Approximately(color.b, 1f) && Mathf.Approximately(color.a, 1f))
@@ -170,7 +172,7 @@ public class GameManager : MonoBehaviour
     }
     else
     {
-        return "Unknown"; // You might want to handle other cases accordingly
+        return "Unknown"; 
     }
 }
 }
