@@ -6,6 +6,7 @@ using UnityEngine;
 public class Bishop : Piece
 {
 
+    //finds the legal spots to move on current Bishop
     public override void FindAvailableSpots(){
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();

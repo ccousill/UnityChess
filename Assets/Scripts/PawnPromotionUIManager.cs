@@ -10,16 +10,15 @@ public class PawnPromotionUIManager : MonoBehaviour
     {
         promotionText.gameObject.SetActive(true);
         Time.timeScale = 0;
-        // Additional logic to handle UI display
     }
 
     public void HidePawnPromotionUI()
     {
         promotionText.gameObject.SetActive(false);
         Time.timeScale = 1;
-        // Additional logic to handle UI hide
     }
 
+    //initiate pawn promotion in gameManager when an options is clicked
     public void click(string pieceType){
         GameManager.Instance.PawnPromotion(pieceType);
     }

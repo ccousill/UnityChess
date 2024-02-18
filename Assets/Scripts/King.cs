@@ -7,6 +7,8 @@ using UnityEngine;
 public class King : Piece
 {
     bool inCheck = false;
+
+    //finds the legal spots to move on current King
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
@@ -22,6 +24,7 @@ public class King : Piece
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 
+    //checks the legality of spaces around king
     void CheckAround(ChessBoardManager board, int xPiecePosition, int yPiecePosition, List<Vector2Int> moves)
     {
         for (int xOffset = -1; xOffset <= 1; xOffset++)

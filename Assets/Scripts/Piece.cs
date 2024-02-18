@@ -33,17 +33,24 @@ public abstract class Piece : MonoBehaviour
         set{currentAvailableMoves = value;}
     }
 
+
+    //initialize Pieces position
+
     protected virtual void Awake(){
         currentPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x),Mathf.RoundToInt(transform.position.z));
         initialPosition = currentPosition;
         hasMoved = false;
     }
+
+    //initialize piece color by checking parent tag
     protected virtual void Start(){
         for(int i = 0; i<transform.childCount;i++){
             childMeshRenderer.Add(transform.GetChild(i).GetComponent<MeshRenderer>());
         }
         setColor();
     }
+
+    //checks mouse click on piece
 
     protected virtual void OnMouseDown()
     {
@@ -58,6 +65,7 @@ public abstract class Piece : MonoBehaviour
         
     }
 
+    //transforms pieces position on the board and updates current position property
     public void Move(Vector2Int newPosition){
         transform.position = new Vector3(newPosition.x,transform.position.y,newPosition.y);
         if(!hasMoved){
@@ -66,6 +74,7 @@ public abstract class Piece : MonoBehaviour
         currentPosition = newPosition;
     }
 
+    //transforms piece by lifting it, giving a visual indicator of was piece is selected
     public void ToggleLift(){
         isSelected = !isSelected;
         if(isSelected){
@@ -74,6 +83,8 @@ public abstract class Piece : MonoBehaviour
             transform.position -= new Vector3(0,.5f,0);
         }
     }
+
+    //method to set the color and owner of the piece
     private void setColor(){
         if(transform.parent.parent.tag == "Black"){
             pieceColor = Color.black;
@@ -90,10 +101,14 @@ public abstract class Piece : MonoBehaviour
             Owner = GameManager.Instance.Players[0];
         }
     }
+
+    //checks if two coordinates are within bounds of the board
     protected bool IsWithinBounds(int x, int y)
     {
         return x >= 0 && x < ChessBoardManager.BoardSize && y >= 0 && y < ChessBoardManager.BoardSize;
     }
+
+    //checks if the position clicked is in the available moves of a given piece 
     public bool IsValid(Vector2Int position){
         if(CurrentAvailableMoves.Contains(position)){
             return true;

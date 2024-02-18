@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Knight : Piece
 {
+
+    //finds the legal spots to move on current knight
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;

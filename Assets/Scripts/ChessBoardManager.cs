@@ -8,8 +8,8 @@ using UnityEngine.PlayerLoop;
 public class ChessBoardManager : MonoBehaviour
 {
 
-    private Piece[,] chessboard = new Piece[8, 8];
-    private Tile[,] tiles = new Tile[8, 8];
+    private Piece[,] pieceBoard = new Piece[8, 8];
+    private Tile[,] tileBoard = new Tile[8, 8];
     private Vector2Int[] currentlyAvailableMoves;
     private Piece enPassantablePiece = null;
     public Piece EnPessantablePiece
@@ -31,13 +31,13 @@ public class ChessBoardManager : MonoBehaviour
     {
         get { return currentlySelectedPiece; }
     }
-    public Piece[,] GetChessBoard()
+    public Piece[,] GetPieceBoard()
     {
-        return chessboard;
+        return pieceBoard;
     }
-    public Tile[,] GetTiles()
+    public Tile[,] GetTileBoard()
     {
-        return tiles;
+        return tileBoard;
     }
 
     void Start()
@@ -46,6 +46,7 @@ public class ChessBoardManager : MonoBehaviour
         InitializeChessboard();
     }
 
+    //sets up 2d array of 8x8 pieces that match the chess board
     void InitializeChessboard()
     {
         Piece[] pieces = FindObjectsOfType<Piece>();
@@ -53,7 +54,7 @@ public class ChessBoardManager : MonoBehaviour
         {
             int xPosition = piece.CurrentPosition.x;
             int yPosition = piece.CurrentPosition.y;
-            chessboard[xPosition, yPosition] = piece;
+            pieceBoard[xPosition, yPosition] = piece;
         }
 
         Tile[] allTiles = FindObjectsOfType<Tile>();
@@ -61,10 +62,12 @@ public class ChessBoardManager : MonoBehaviour
         {
             int x = Mathf.RoundToInt(tile.transform.position.x);
             int z = Mathf.RoundToInt(tile.transform.position.z);
-            tiles[x, z] = tile;
+            tileBoard[x, z] = tile;
         }
 
     }
+
+    //Selects a piece which lifts, marks it as selected, and shows available moves that can be made for that piece
     public void SelectPiece(Piece piece)
     {
         currentlySelectedPiece = piece;
@@ -75,6 +78,7 @@ public class ChessBoardManager : MonoBehaviour
         ShowParticles();
     }
 
+    //deselects a piece which sets it down and unmarks as selected
     public void DeSelectPiece(Piece piece)
     {
         piece.ToggleLift();
@@ -85,15 +89,17 @@ public class ChessBoardManager : MonoBehaviour
         currentlySelectedPiece = null;
     }
 
+    //activates when a selected piece clicks another location on the board.
+    //checks are made whether the click is valid or if a piece is selected at all
     public Piece CompleteTurn(Vector2Int position)
     {
         Piece pieceMoved = currentlySelectedPiece;
-        enPassantablePiece = null;
-        int forwardDirection = (currentlySelectedPiece.PieceColor == Color.white) ? 1 : -1;
         if (currentlySelectedPiece != null)
         {
             if (currentlySelectedPiece.IsValid(position))
             {
+                enPassantablePiece = null;
+                int forwardDirection = (currentlySelectedPiece.PieceColor == Color.white) ? 1 : -1;
                 CheckEnPessant(position, forwardDirection);
                 CheckCastle(position);
 
@@ -116,6 +122,7 @@ public class ChessBoardManager : MonoBehaviour
         return pieceMoved;
     }
 
+    //checks if move that was made is a castle. updates board accordingly by moving rooks in correct positions
     private void CheckCastle(Vector2Int position)
     {
         if (currentlySelectedPiece is King)
@@ -135,6 +142,7 @@ public class ChessBoardManager : MonoBehaviour
         }
     }
 
+    //checks if move that was made creates an enpessant and if an enpessant is used
     private void CheckEnPessant(Vector2Int position, int forwardDirection)
     {
         if (currentlySelectedPiece is Pawn)
@@ -150,17 +158,19 @@ public class ChessBoardManager : MonoBehaviour
         }
     }
 
+    //plays particles using the currently available moves made from pieces
     public void ShowParticles()
     {
         if (currentlyAvailableMoves != null)
         {
             foreach (Vector2Int position in currentlyAvailableMoves)
             {
-                Tile tile = tiles[(int)position.x, (int)position.y];
+                Tile tile = tileBoard[(int)position.x, (int)position.y];
                 particleManager.PlayParticles(tile);
             }
         }
     }
+    //Deletes particles on the board
 
     public void DeleteParticles()
     {
@@ -168,18 +178,20 @@ public class ChessBoardManager : MonoBehaviour
         {
             foreach (Vector2Int position in currentlyAvailableMoves)
             {
-                Tile tile = tiles[(int)position.x, (int)position.y];
+                Tile tile = tileBoard[(int)position.x, (int)position.y];
                 particleManager.DeleteParticles(tile);
             }
         }
     }
 
+    //deletes piece from the board
     public void TakePiece(Piece takenPiece)
     {
-        chessboard[takenPiece.CurrentPosition.x, takenPiece.CurrentPosition.y] = null;
+        pieceBoard[takenPiece.CurrentPosition.x, takenPiece.CurrentPosition.y] = null;
         Destroy(takenPiece.gameObject);
     }
 
+    //checks if a piece is legally allowed to be taken
     public bool IsTakablePiece(Piece piece)
     {
         {
@@ -187,29 +199,27 @@ public class ChessBoardManager : MonoBehaviour
         }
     }
 
+    //gets a piece from the pieceBoard using coordinates of the pieces position
+
     public Piece GetPieceByCoordinates(Vector2Int position)
     {
         if (position.x >= 0 && position.x < BoardSize && position.y >= 0 && position.y < BoardSize)
         {
-            return chessboard[position.x, position.y];
+            return pieceBoard[position.x, position.y];
         }
 
         return null;
     }
 
+    //updates board by moving physical piece on the board and update 
     public void UpdateBoard(Piece piece, Vector2Int newPos)
     {
         Vector2Int oldPosition = piece.CurrentPosition;
         piece.Move(newPos);
-        chessboard[newPos.x, newPos.y] = piece;
-        if (oldPosition.x == newPos.x && oldPosition.y == newPos.y)
+        pieceBoard[newPos.x, newPos.y] = piece;
+        if (!(oldPosition.x == newPos.x && oldPosition.y == newPos.y))
         {
-
+            pieceBoard[oldPosition.x, oldPosition.y] = null;
         }
-        else
-        {
-            chessboard[oldPosition.x, oldPosition.y] = null;
-        }
-
     }
 }

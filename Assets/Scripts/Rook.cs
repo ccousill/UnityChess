@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Rook : Piece
 {
+    
+    //finds the legal spots to move on current Rook
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
@@ -21,6 +23,7 @@ public class Rook : Piece
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 
+    //checks one direction to add to available moves
     private void CheckDirection(ChessBoardManager board, List<Vector2Int> moves, int x, int y, int xDirection, int yDirection)
     {
         x += xDirection;

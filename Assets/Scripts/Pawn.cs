@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class Pawn : Piece
 {
+
+    //finds the legal spots to move on current pawn
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
-        Piece[,] pieces = board.GetChessBoard();
+        Piece[,] pieces = board.GetPieceBoard();
         int forwardDirection = (PieceColor == Color.white) ? 1 : -1;
         List<Vector2Int> moves = new List<Vector2Int>();
         Vector2Int forwardOne = new Vector2Int(CurrentPosition.x, CurrentPosition.y + forwardDirection);
@@ -45,6 +47,7 @@ public class Pawn : Piece
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
 
+    //checks pawn if it has reached the end of the board.
     public bool HasReachedEnd()
     {
         if ((PieceColor == Color.white && CurrentPosition.y == 7) || (PieceColor == Color.black && CurrentPosition.y == 0))
@@ -54,6 +57,7 @@ public class Pawn : Piece
         return false;
     }
 
+    //checks if a pawn is legally allowed to move forward twice
     public bool CanMoveDouble()
     {
         if (PieceColor == Color.white)

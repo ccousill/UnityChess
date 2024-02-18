@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Queen : Piece
 {
+
+    //finds the legal spots to move on current Queen
     public override void FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
@@ -12,7 +14,7 @@ public class Queen : Piece
         int xPiecePosition = CurrentPosition.x;
         int yPiecePosition = CurrentPosition.y;
 
-        //combine both rook and bishop checks
+        //combined both rook and bishop checks
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, 0); 
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 0); 
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, 1); 
@@ -22,9 +24,12 @@ public class Queen : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 1, -1); 
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, -1); 
 
+
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
         board.CurrentlyAvailableMoves = CurrentAvailableMoves;
     }
+
+    //checks one direction to add to available moves
 
     private void CheckDirection(ChessBoardManager board, List<Vector2Int> moves, int x, int y, int xDirection, int yDirection)
     {

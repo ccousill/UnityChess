@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
     }
 
 
+    //handles logic for when a piece is clicked.
     public void OnChessPieceClicked(Piece clickedPiece)
     {
         
@@ -118,6 +119,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //checks if you are allowed to click a certain piece
     public bool IsValidSelection(Piece clickedPiece){
         if(GetCurrentPlayer().PlayerColor != GetColorName(clickedPiece.PieceColor)){
             if(isClicked){
@@ -131,6 +133,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //handles move sequence 
     public void HandleMove(Vector2Int position)
     {
         if (currentGameState == GameState.Normal)
@@ -152,14 +155,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //calls ui for pawn promotion
     public void PawnPromotionUI()
     {
         pawnPromotionUI.ShowPawnPromotionUI();
     }
+
+    //resets game after a win
     private void GameOverSequence(){
         Debug.Log("Game Over!");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    //promotes pawn when selection is made from promotion UI
 
     public void PawnPromotion(string selectedPieceType)
     {
@@ -170,6 +178,7 @@ public class GameManager : MonoBehaviour
         pawnPromotionUI.HidePawnPromotionUI();
     }
 
+    //instantiates a piece on given a string
     private Piece InstantiatePiece(string pieceType)
     {
         GameObject piecePrefab = GetPrefabByType(pieceType);
@@ -182,6 +191,7 @@ public class GameManager : MonoBehaviour
         return newPiece;
     }
 
+    //gets a prefab given a string
     private GameObject GetPrefabByType(string pieceType)
     {
         switch (pieceType)
@@ -200,6 +210,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //returns string color given type Color
     public string GetColorName(Color color)
     {
         // Check if the color is closer to white or black based on the tolerance
