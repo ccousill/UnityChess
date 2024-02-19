@@ -6,8 +6,14 @@ using UnityEngine;
 public class Queen : Piece
 {
 
+    private int value = 90;
+    protected override void Awake() {
+        base.Awake();
+        pieceValue = value;
+    }
+
     //finds the legal spots to move on current Queen
-    public override void FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
@@ -26,7 +32,7 @@ public class Queen : Piece
 
 
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
+        return CurrentAvailableMoves;
     }
 
     //checks one direction to add to available moves

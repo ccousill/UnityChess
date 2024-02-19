@@ -922,6 +922,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2828602916379301827, guid: ebbe8ddbc96aa234fbd5796b1db3f1f9, type: 3}
   m_PrefabInstance: {fileID: 183285873}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &248479601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 248479603}
+  - component: {fileID: 248479602}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &248479602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248479601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85f3a1ab807bd10499b688b6945d1883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &248479603
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248479601}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &279507135
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8678,6 +8722,7 @@ MonoBehaviour:
   queenPrefab: {fileID: 2180361274274746133, guid: ff1ca52ad9da9554086daee02bfd8348, type: 3}
   knightPrefab: {fileID: 9093495262596540881, guid: cb555ee2cd0a07849beffc307a785db5, type: 3}
   bishopPrefab: {fileID: 3650507243356358997, guid: 554434990e090b244b35061c5c10dee2, type: 3}
+  AI: {fileID: 0}
 --- !u!114 &9051460427514254578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8712,3 +8757,4 @@ SceneRoots:
   - {fileID: 984089488071823229}
   - {fileID: 1065887554}
   - {fileID: 2056312776}
+  - {fileID: 248479603}

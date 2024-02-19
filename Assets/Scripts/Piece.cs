@@ -16,13 +16,14 @@ public abstract class Piece : MonoBehaviour
     private Vector2Int currentPosition;
     private Vector2Int initialPosition;
     
-    public abstract void FindAvailableSpots();
+    public abstract Vector2Int[] FindAvailableSpots();
     public Color PieceColor => pieceColor;
     public bool HasMoved => hasMoved;
     public Vector2Int CurrentPosition => currentPosition;
     public Vector2Int InitialPosition => initialPosition;
 
     public Player Owner{get;set;}
+
     public bool IsSelected{
         get{return isSelected;}
         set{isSelected = value;}
@@ -32,6 +33,7 @@ public abstract class Piece : MonoBehaviour
         get{return currentAvailableMoves;}
         set{currentAvailableMoves = value;}
     }
+    protected int pieceValue;
 
 
     //initialize Pieces position
@@ -47,7 +49,8 @@ public abstract class Piece : MonoBehaviour
         for(int i = 0; i<transform.childCount;i++){
             childMeshRenderer.Add(transform.GetChild(i).GetComponent<MeshRenderer>());
         }
-        setColor();
+        SetColorProperties();
+        Debug.Log(pieceValue);
     }
 
     //checks mouse click on piece
@@ -85,13 +88,14 @@ public abstract class Piece : MonoBehaviour
     }
 
     //method to set the color and owner of the piece
-    private void setColor(){
+    private void SetColorProperties(){
         if(transform.parent.parent.tag == "Black"){
             pieceColor = Color.black;
             for(int i = 0;i<transform.childCount;i++){
                 childMeshRenderer[i].material = blackMaterial; 
             }
             Owner = GameManager.Instance.Players[1];
+            pieceValue *= -1;
 
         }else{
             pieceColor = Color.white; 

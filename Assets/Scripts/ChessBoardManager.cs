@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -74,7 +75,7 @@ public class ChessBoardManager : MonoBehaviour
         piece.ToggleLift();
         piece.IsSelected = true;
         GameManager.Instance.IsClicked = true;
-        currentlySelectedPiece.FindAvailableSpots();
+        currentlyAvailableMoves = currentlySelectedPiece.FindAvailableSpots();
         ShowParticles();
     }
 
@@ -106,7 +107,8 @@ public class ChessBoardManager : MonoBehaviour
                 if (GetPieceByCoordinates(position) != null && IsTakablePiece(GetPieceByCoordinates(position)))
                 {
                     Piece takenPiece = GetPieceByCoordinates(position);
-                    if(takenPiece is King){
+                    if (takenPiece is King)
+                    {
                         GameManager.Instance.GameOver = true;
                     }
                     TakePiece(takenPiece);
@@ -221,5 +223,36 @@ public class ChessBoardManager : MonoBehaviour
         {
             pieceBoard[oldPosition.x, oldPosition.y] = null;
         }
+    }
+
+    public List<Vector2Int> GenerateAllPossibleMoves()
+    {
+        Player currentPlayer = GameManager.Instance.GetCurrentPlayer();
+        List<Vector2Int> allMoves = new List<Vector2Int>();
+        List<Piece> currentPlayersPieces = getPlayersPieces(currentPlayer);
+
+        foreach (Piece piece in currentPlayersPieces){
+            Vector2Int[] pieceMoves = piece.FindAvailableSpots();
+            List<Vector2Int> pieceMovesList = pieceMoves.ToList();
+            allMoves.AddRange(pieceMovesList);
+        }
+        return allMoves;
+    }
+
+    public List<Piece> getPlayersPieces(Player player)
+    {
+        List<Piece> result = new List<Piece>();
+        foreach (Piece piece in pieceBoard)
+        {
+            if (piece != null)
+            {
+                if (piece.Owner.PlayerColor == player.PlayerColor)
+                {
+                    result.Add(piece);
+                }
+            }
+
+        }
+        return result;
     }
 }

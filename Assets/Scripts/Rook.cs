@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class Rook : Piece
 {
-    
+    private int value = 50;
+    protected override void Awake()
+    {
+        base.Awake();
+        pieceValue = value;
+    }
     //finds the legal spots to move on current Rook
-    public override void FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
@@ -20,7 +25,7 @@ public class Rook : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, 0, -1);//Check down
 
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
+        return CurrentAvailableMoves;
     }
 
     //checks one direction to add to available moves

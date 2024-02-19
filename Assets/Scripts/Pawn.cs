@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class Pawn : Piece
 {
+    private int value = 10;
+    protected override void Awake() {
+        base.Awake();
+        pieceValue = value;
+    }
 
     //finds the legal spots to move on current pawn
-    public override void FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         Piece[,] pieces = board.GetPieceBoard();
@@ -44,7 +49,7 @@ public class Pawn : Piece
             moves.Add(forwardOneRight);
         }
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
+        return CurrentAvailableMoves;
     }
 
     //checks pawn if it has reached the end of the board.

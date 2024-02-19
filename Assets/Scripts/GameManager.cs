@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject queenPrefab;
     public GameObject knightPrefab;
     public GameObject bishopPrefab;
+    public AIPlayer AI;
 
     public bool GameOver{get;set;}
     public ChessBoardManager ChessBoard
@@ -66,6 +67,7 @@ public class GameManager : MonoBehaviour
         GameOver = false;
         chessBoard = FindObjectOfType<ChessBoardManager>();
         pawnPromotionUI = FindObjectOfType<PawnPromotionUIManager>();
+        AI = FindAnyObjectByType<AIPlayer>();
         pawnPromotionUI.HidePawnPromotionUI();
         InitializePlayers();
     }
@@ -81,7 +83,15 @@ public class GameManager : MonoBehaviour
 
     void StartPlayerTurn()
     {
-        Debug.Log($"It is currently Player {players[currentPlayerIndex].PlayerColor}'s turn");
+        Player currentPlayer = GetCurrentPlayer();
+        Debug.Log($"It is currently Player {currentPlayer.PlayerColor}'s turn");
+        if(currentPlayer.PlayerColor == "Black"){
+            Debug.Log("AIs Turn!");
+            AI.makeAIMove();
+        }else{
+            Debug.Log("Players Turn");
+        }
+        
     }
 
     public void EndPlayerTurn()

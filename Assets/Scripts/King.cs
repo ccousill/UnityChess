@@ -7,9 +7,14 @@ using UnityEngine;
 public class King : Piece
 {
     bool inCheck = false;
+    private int value = 900;
+    protected override void Awake() {
+        base.Awake();
+        pieceValue = value;
+    }
 
     //finds the legal spots to move on current King
-    public override void FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
@@ -21,7 +26,7 @@ public class King : Piece
             CheckCastle(board, xPiecePosition, yPiecePosition, moves);
         }
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
+        return CurrentAvailableMoves;
     }
 
     //checks the legality of spaces around king

@@ -6,8 +6,14 @@ using UnityEngine;
 public class Knight : Piece
 {
 
+    private int value = 30;
+    protected override void Awake()
+    {
+        base.Awake();
+        pieceValue = value;
+    }
     //finds the legal spots to move on current knight
-    public override void FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots()
     {
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
@@ -20,7 +26,7 @@ public class Knight : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, 1); // check up left
 
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
+        return CurrentAvailableMoves;
     }
 
     private void CheckDirection(ChessBoardManager board, List<Vector2Int> moves, int x, int y, int xDirection, int yDirection)

@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class Bishop : Piece
 {
+    private int value = 30;
+    protected override void Awake() {
+        base.Awake();
+        pieceValue = value;
+    }
 
     //finds the legal spots to move on current Bishop
-    public override void FindAvailableSpots(){
+    public override Vector2Int[] FindAvailableSpots(){
         ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
         int xPiecePosition = CurrentPosition.x;
@@ -19,7 +24,7 @@ public class Bishop : Piece
         CheckDirection(board, moves, xPiecePosition, yPiecePosition, -1, -1); //check down left
 
         CurrentAvailableMoves = moves.Where(pos => IsWithinBounds(pos.x, pos.y)).ToArray();
-        board.CurrentlyAvailableMoves = CurrentAvailableMoves;
+        return CurrentAvailableMoves;
     }
 
     private void CheckDirection(ChessBoardManager board, List<Vector2Int> moves, int x, int y, int xDirection, int yDirection)
