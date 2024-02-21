@@ -104,6 +104,9 @@ public class GameManager : MonoBehaviour
     {
         return players[currentPlayerIndex];
     }
+    public Player GetOtherPlayer(){
+        return players[(currentPlayerIndex + 1) % players.Count];
+    }
 
 
     //handles logic for when a piece is clicked.

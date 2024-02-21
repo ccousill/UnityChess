@@ -44,7 +44,7 @@ public class King : Piece
                     Piece targetPiece = board.GetPieceByCoordinates(new Vector2Int(x, y));
 
                     // Check if the spot is empty or contains an opponent's piece
-                    if (targetPiece == null || board.IsTakablePiece(targetPiece))
+                    if (targetPiece == null || board.IsTakablePiece(this,targetPiece))
                     {
                         // Process the tile or make it available
                         moves.Add(new Vector2Int(x, y));

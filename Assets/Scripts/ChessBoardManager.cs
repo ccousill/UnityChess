@@ -31,6 +31,7 @@ public class ChessBoardManager : MonoBehaviour
     public Piece CurrentlySelectedPiece
     {
         get { return currentlySelectedPiece; }
+        set{currentlySelectedPiece = value;}
     }
     public Piece[,] GetPieceBoard()
     {
@@ -104,7 +105,7 @@ public class ChessBoardManager : MonoBehaviour
                 CheckEnPessant(position, forwardDirection);
                 CheckCastle(position);
 
-                if (GetPieceByCoordinates(position) != null && IsTakablePiece(GetPieceByCoordinates(position)))
+                if (GetPieceByCoordinates(position) != null && IsTakablePiece(currentlySelectedPiece,GetPieceByCoordinates(position)))
                 {
                     Piece takenPiece = GetPieceByCoordinates(position);
                     if (takenPiece is King)
@@ -194,11 +195,9 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     //checks if a piece is legally allowed to be taken
-    public bool IsTakablePiece(Piece piece)
+    public bool IsTakablePiece(Piece thisPiece,Piece otherPiece)
     {
-        {
-            return currentlySelectedPiece.PieceColor != piece.PieceColor;
-        }
+        return thisPiece.PieceColor != otherPiece.PieceColor;
     }
 
     //gets a piece from the pieceBoard using coordinates of the pieces position
@@ -231,7 +230,8 @@ public class ChessBoardManager : MonoBehaviour
         List<Vector2Int> allMoves = new List<Vector2Int>();
         List<Piece> currentPlayersPieces = getPlayersPieces(currentPlayer);
 
-        foreach (Piece piece in currentPlayersPieces){
+        foreach (Piece piece in currentPlayersPieces)
+        {
             Vector2Int[] pieceMoves = piece.FindAvailableSpots();
             List<Vector2Int> pieceMovesList = pieceMoves.ToList();
             allMoves.AddRange(pieceMovesList);

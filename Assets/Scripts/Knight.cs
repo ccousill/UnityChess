@@ -43,7 +43,7 @@ public class Knight : Piece
     {
         if (IsWithinBounds(newX, newY))
         {
-            if (board.GetPieceByCoordinates(new Vector2Int(newX, newY)) == null || board.IsTakablePiece(board.GetPieceByCoordinates(new Vector2Int(newX, newY))))
+            if (board.GetPieceByCoordinates(new Vector2Int(newX, newY)) == null || board.IsTakablePiece(this,board.GetPieceByCoordinates(new Vector2Int(newX, newY))))
             {
                 moves.Add(new Vector2Int(newX, newY));
             }

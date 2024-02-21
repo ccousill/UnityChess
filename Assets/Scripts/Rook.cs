@@ -42,7 +42,7 @@ public class Rook : Piece
                 x += xDirection;
                 y += yDirection;
             }
-            else if (board.IsTakablePiece(board.GetPieceByCoordinates(new Vector2Int(x, y))))
+            else if (board.IsTakablePiece(this,board.GetPieceByCoordinates(new Vector2Int(x, y))))
             {
                 moves.Add(new Vector2Int(x, y));
                 break;
@@ -54,5 +54,4 @@ public class Rook : Piece
 
         }
     }
-
 }
