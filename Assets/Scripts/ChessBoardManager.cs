@@ -11,28 +11,14 @@ public class ChessBoardManager : MonoBehaviour
 
     private Piece[,] pieceBoard = new Piece[8, 8];
     private Tile[,] tileBoard = new Tile[8, 8];
-    private Vector2Int[] currentlyAvailableMoves;
     private Piece enPassantablePiece = null;
     public Piece EnPessantablePiece
     {
         get { return enPassantablePiece; }
         set { enPassantablePiece = value; }
     }
-    public Vector2Int[] CurrentlyAvailableMoves
-    {
-        get { return currentlyAvailableMoves; }
-        set { currentlyAvailableMoves = value; }
-    }
-
-    ParticleManager particleManager;
-
     public const int BoardSize = 8;
-    private Piece currentlySelectedPiece;
-    public Piece CurrentlySelectedPiece
-    {
-        get { return currentlySelectedPiece; }
-        set{currentlySelectedPiece = value;}
-    }
+
     public Piece[,] GetPieceBoard()
     {
         return pieceBoard;
@@ -42,10 +28,37 @@ public class ChessBoardManager : MonoBehaviour
         return tileBoard;
     }
 
+    private bool tempBoard = false;
+    public ChessBoardManager CloneChessBoardManager()
+    {
+        ChessBoardManager cloneObject = Instantiate(this);
+        Piece[,] originalChessboard = pieceBoard;
+        cloneObject.tempBoard = true;
+        cloneObject.gameObject.SetActive(false);
+        cloneObject.enPassantablePiece = enPassantablePiece;
+        for (int x = 0; x < BoardSize; x++)
+        {
+            for (int y = 0; y < BoardSize; y++)
+            {
+                if (originalChessboard[x, y] != null)
+                {
+                    Piece clonedPiece = originalChessboard[x, y].Clone();
+                    cloneObject.pieceBoard[x, y] = clonedPiece;
+                }
+            }
+        }
+
+        return cloneObject;
+    }
+
     void Start()
     {
-        particleManager = GetComponent<ParticleManager>();
-        InitializeChessboard();
+        if (!tempBoard)
+        {
+            Debug.Log("initializing chess board");
+            InitializeChessboard();
+
+        }
     }
 
     //sets up 2d array of 8x8 pieces that match the chess board
@@ -54,6 +67,7 @@ public class ChessBoardManager : MonoBehaviour
         Piece[] pieces = FindObjectsOfType<Piece>();
         foreach (Piece piece in pieces)
         {
+
             int xPosition = piece.CurrentPosition.x;
             int yPosition = piece.CurrentPosition.y;
             pieceBoard[xPosition, yPosition] = piece;
@@ -66,34 +80,14 @@ public class ChessBoardManager : MonoBehaviour
             int z = Mathf.RoundToInt(tile.transform.position.z);
             tileBoard[x, z] = tile;
         }
-
     }
 
     //Selects a piece which lifts, marks it as selected, and shows available moves that can be made for that piece
-    public void SelectPiece(Piece piece)
-    {
-        currentlySelectedPiece = piece;
-        piece.ToggleLift();
-        piece.IsSelected = true;
-        GameManager.Instance.IsClicked = true;
-        currentlyAvailableMoves = currentlySelectedPiece.FindAvailableSpots();
-        ShowParticles();
-    }
 
-    //deselects a piece which sets it down and unmarks as selected
-    public void DeSelectPiece(Piece piece)
-    {
-        piece.ToggleLift();
-        DeleteParticles();
-        piece.IsSelected = false;
-        GameManager.Instance.IsClicked = false;
-        currentlyAvailableMoves = null;
-        currentlySelectedPiece = null;
-    }
 
     //activates when a selected piece clicks another location on the board.
     //checks are made whether the click is valid or if a piece is selected at all
-    public Piece CompleteTurn(Vector2Int position)
+    public Piece CompleteTurn(Piece currentlySelectedPiece, Vector2Int position)
     {
         Piece pieceMoved = currentlySelectedPiece;
         if (currentlySelectedPiece != null)
@@ -102,10 +96,10 @@ public class ChessBoardManager : MonoBehaviour
             {
                 enPassantablePiece = null;
                 int forwardDirection = (currentlySelectedPiece.PieceColor == Color.white) ? 1 : -1;
-                CheckEnPessant(position, forwardDirection);
-                CheckCastle(position);
+                CheckEnPessant(currentlySelectedPiece, position, forwardDirection);
+                CheckCastle(currentlySelectedPiece, position);
 
-                if (GetPieceByCoordinates(position) != null && IsTakablePiece(currentlySelectedPiece,GetPieceByCoordinates(position)))
+                if (GetPieceByCoordinates(position) != null && IsTakablePiece(currentlySelectedPiece, GetPieceByCoordinates(position)))
                 {
                     Piece takenPiece = GetPieceByCoordinates(position);
                     if (takenPiece is King)
@@ -118,7 +112,13 @@ public class ChessBoardManager : MonoBehaviour
 
 
                 UpdateBoard(currentlySelectedPiece, position);
-                DeSelectPiece(currentlySelectedPiece);
+
+                if (currentlySelectedPiece.IsSelected)
+                {
+                    GameManager.Instance.DeSelectPiece(currentlySelectedPiece);
+
+                }
+
                 GameManager.Instance.EndPlayerTurn();
             }
         }
@@ -126,7 +126,7 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     //checks if move that was made is a castle. updates board accordingly by moving rooks in correct positions
-    private void CheckCastle(Vector2Int position)
+    private void CheckCastle(Piece currentlySelectedPiece, Vector2Int position)
     {
         if (currentlySelectedPiece is King)
         {
@@ -146,7 +146,7 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     //checks if move that was made creates an enpessant and if an enpessant is used
-    private void CheckEnPessant(Vector2Int position, int forwardDirection)
+    private void CheckEnPessant(Piece currentlySelectedPiece, Vector2Int position, int forwardDirection)
     {
         if (currentlySelectedPiece is Pawn)
         {
@@ -161,31 +161,7 @@ public class ChessBoardManager : MonoBehaviour
         }
     }
 
-    //plays particles using the currently available moves made from pieces
-    public void ShowParticles()
-    {
-        if (currentlyAvailableMoves != null)
-        {
-            foreach (Vector2Int position in currentlyAvailableMoves)
-            {
-                Tile tile = tileBoard[(int)position.x, (int)position.y];
-                particleManager.PlayParticles(tile);
-            }
-        }
-    }
-    //Deletes particles on the board
 
-    public void DeleteParticles()
-    {
-        if (currentlyAvailableMoves != null)
-        {
-            foreach (Vector2Int position in currentlyAvailableMoves)
-            {
-                Tile tile = tileBoard[(int)position.x, (int)position.y];
-                particleManager.DeleteParticles(tile);
-            }
-        }
-    }
 
     //deletes piece from the board
     public void TakePiece(Piece takenPiece)
@@ -195,7 +171,7 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     //checks if a piece is legally allowed to be taken
-    public bool IsTakablePiece(Piece thisPiece,Piece otherPiece)
+    public bool IsTakablePiece(Piece thisPiece, Piece otherPiece)
     {
         return thisPiece.PieceColor != otherPiece.PieceColor;
     }
@@ -223,22 +199,6 @@ public class ChessBoardManager : MonoBehaviour
             pieceBoard[oldPosition.x, oldPosition.y] = null;
         }
     }
-
-    public List<Vector2Int> GenerateAllPossibleMoves()
-    {
-        Player currentPlayer = GameManager.Instance.GetCurrentPlayer();
-        List<Vector2Int> allMoves = new List<Vector2Int>();
-        List<Piece> currentPlayersPieces = getPlayersPieces(currentPlayer);
-
-        foreach (Piece piece in currentPlayersPieces)
-        {
-            Vector2Int[] pieceMoves = piece.FindAvailableSpots();
-            List<Vector2Int> pieceMovesList = pieceMoves.ToList();
-            allMoves.AddRange(pieceMovesList);
-        }
-        return allMoves;
-    }
-
     public List<Piece> getPlayersPieces(Player player)
     {
         List<Piece> result = new List<Piece>();
@@ -254,5 +214,33 @@ public class ChessBoardManager : MonoBehaviour
 
         }
         return result;
+    }
+
+    public List<Piece> getAllPlayersPieces()
+    {
+        List<Piece> result = new List<Piece>();
+        foreach (Piece piece in pieceBoard)
+        {
+            if (piece != null)
+            {
+                result.Add(piece);
+            }
+
+        }
+        return result;
+    }
+
+    public void DestroyBoard(){
+        for (int x = 0; x < BoardSize; x++)
+        {
+            for (int y = 0; y < BoardSize; y++)
+            {
+                if (pieceBoard[x, y] != null)
+                {
+                   pieceBoard[x,y].DestroyPiece();
+                }
+            }
+        }
+        Destroy(gameObject);
     }
 }

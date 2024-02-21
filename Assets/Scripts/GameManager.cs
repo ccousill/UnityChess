@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     private bool isClicked;
     private int currentPlayerIndex = 0;
+    ParticleManager particleManager;
     private List<Player> players = new List<Player>();
     public List<Player> Players => players;
     private Piece lastMovedPiece;
@@ -22,10 +23,24 @@ public class GameManager : MonoBehaviour
     public GameObject bishopPrefab;
     public AIPlayer AI;
 
-    public bool GameOver{get;set;}
+    public bool GameOver { get; set; }
+
+    private Piece currentlySelectedPiece;
+    public Piece CurrentlySelectedPiece
+    {
+        get { return currentlySelectedPiece; }
+        set { currentlySelectedPiece = value; }
+    }
     public ChessBoardManager ChessBoard
     {
         get { return chessBoard; }
+    }
+
+    private Vector2Int[] currentlyAvailableMoves;
+    public Vector2Int[] CurrentlyAvailableMoves
+    {
+        get { return currentlyAvailableMoves; }
+        set { currentlyAvailableMoves = value; }
     }
     public bool IsClicked
     {
@@ -63,10 +78,13 @@ public class GameManager : MonoBehaviour
     }
     void Awake()
     {
+        Debug.Log("on start");
         isClicked = false;
         GameOver = false;
         chessBoard = FindObjectOfType<ChessBoardManager>();
+        Debug.Log(chessBoard);
         pawnPromotionUI = FindObjectOfType<PawnPromotionUIManager>();
+        particleManager = GetComponent<ParticleManager>();
         AI = FindAnyObjectByType<AIPlayer>();
         pawnPromotionUI.HidePawnPromotionUI();
         InitializePlayers();
@@ -85,13 +103,16 @@ public class GameManager : MonoBehaviour
     {
         Player currentPlayer = GetCurrentPlayer();
         Debug.Log($"It is currently Player {currentPlayer.PlayerColor}'s turn");
-        if(currentPlayer.PlayerColor == "Black"){
+        if (currentPlayer.PlayerColor == "Black")
+        {
             Debug.Log("AIs Turn!");
-            AI.makeAIMove();
-        }else{
+            AI.makeAIMove(chessBoard);
+        }
+        else
+        {
             Debug.Log("Players Turn");
         }
-        
+
     }
 
     public void EndPlayerTurn()
@@ -104,44 +125,70 @@ public class GameManager : MonoBehaviour
     {
         return players[currentPlayerIndex];
     }
-    public Player GetOtherPlayer(){
+    public Player GetOtherPlayer()
+    {
         return players[(currentPlayerIndex + 1) % players.Count];
     }
 
+    public void SelectPiece(Piece piece)
+    {
+        currentlySelectedPiece = piece;
+        piece.ToggleLift();
+        piece.IsSelected = true;
+        GameManager.Instance.IsClicked = true;
+        currentlyAvailableMoves = currentlySelectedPiece.FindAvailableSpots(chessBoard);
+        ShowParticles();
+    }
+
+    //deselects a piece which sets it down and unmarks as selected
+    public void DeSelectPiece(Piece piece)
+    {
+        piece.ToggleLift();
+        DeleteParticles();
+        piece.IsSelected = false;
+        GameManager.Instance.IsClicked = false;
+        currentlyAvailableMoves = null;
+        currentlySelectedPiece = null;
+    }
 
     //handles logic for when a piece is clicked.
     public void OnChessPieceClicked(Piece clickedPiece)
     {
-        
+
         if (IsValidSelection(clickedPiece))
         {
-            Piece currentlySelectedPiece = chessBoard.CurrentlySelectedPiece;
             if (ReferenceEquals(clickedPiece, currentlySelectedPiece))
             {
-                chessBoard.DeSelectPiece(clickedPiece);
+                DeSelectPiece(clickedPiece);
             }
             else
             {
                 if (currentlySelectedPiece != null)
                 {
-                    chessBoard.DeSelectPiece(currentlySelectedPiece);
+                    DeSelectPiece(currentlySelectedPiece);
                 }
-                chessBoard.SelectPiece(clickedPiece);
+                SelectPiece(clickedPiece);
             }
 
         }
     }
 
     //checks if you are allowed to click a certain piece
-    public bool IsValidSelection(Piece clickedPiece){
-        if(GetCurrentPlayer().PlayerColor != GetColorName(clickedPiece.PieceColor)){
-            if(isClicked){
+    public bool IsValidSelection(Piece clickedPiece)
+    {
+        if (GetCurrentPlayer().PlayerColor != GetColorName(clickedPiece.PieceColor))
+        {
+            if (isClicked)
+            {
                 return true;
             }
-            else{
+            else
+            {
                 return false;
             }
-        }else{
+        }
+        else
+        {
             return true;
         }
     }
@@ -151,9 +198,11 @@ public class GameManager : MonoBehaviour
     {
         if (currentGameState == GameState.Normal)
         {
-            Piece pieceMoved = chessBoard.CompleteTurn(position);
+
+            Piece pieceMoved = chessBoard.CompleteTurn(currentlySelectedPiece,position);
             lastMovedPiece = pieceMoved;
-            if(GameOver){
+            if (GameOver)
+            {
                 GameOverSequence();
             }
             else if (lastMovedPiece is Pawn)
@@ -175,7 +224,8 @@ public class GameManager : MonoBehaviour
     }
 
     //resets game after a win
-    private void GameOverSequence(){
+    private void GameOverSequence()
+    {
         Debug.Log("Game Over!");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -240,4 +290,32 @@ public class GameManager : MonoBehaviour
             return "Unknown";
         }
     }
+
+    //plays particles using the currently available moves made from pieces
+    public void ShowParticles()
+    {
+        if (currentlyAvailableMoves != null)
+        {
+            foreach (Vector2Int position in currentlyAvailableMoves)
+            {
+                Tile tile = chessBoard.GetTileBoard()[(int)position.x, (int)position.y];
+                particleManager.PlayParticles(tile);
+            }
+        }
+    }
+    //Deletes particles on the board
+
+    public void DeleteParticles()
+    {
+        if (currentlyAvailableMoves != null)
+        {
+            foreach (Vector2Int position in currentlyAvailableMoves)
+            {
+                Tile tile = chessBoard.GetTileBoard()[(int)position.x, (int)position.y];
+                particleManager.DeleteParticles(tile);
+            }
+        }
+    }
+
+
 }

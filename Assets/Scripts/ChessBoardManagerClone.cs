@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChessBoardManagerClone
@@ -12,14 +10,15 @@ public class ChessBoardManagerClone
     {
         chessboardCopy = new Piece[ChessBoardManager.BoardSize, ChessBoardManager.BoardSize];
         Piece[,] originalChessboard = original.GetPieceBoard();
-
+        
         for (int x = 0; x < ChessBoardManager.BoardSize; x++)
         {
             for (int y = 0; y < ChessBoardManager.BoardSize; y++)
             {
                 if (originalChessboard[x, y] != null)
                 {
-                    chessboardCopy[x, y] = originalChessboard[x, y].Clone();
+                    Piece clonedPiece = originalChessboard[x, y].Clone();
+                    chessboardCopy[x, y] = clonedPiece;
                 }
             }
         }
@@ -36,14 +35,14 @@ public class ChessBoardManagerClone
             {
                 if (originalChessboard[x, y] != null)
                 {
-                    chessboardCopy[x, y] = originalChessboard[x, y].Clone();
+                    chessboardCopy[x, y] = originalChessboard[x, y];
                 }
             }
         }
     }
 
     public void UpdateBoardState(Piece piece, Vector2Int newPos)
-    {   
+    {
         Vector2Int oldPosition = piece.CurrentPosition;
         chessboardCopy[newPos.x, newPos.y] = piece;
         if (!(oldPosition.x == newPos.x && oldPosition.y == newPos.y))
@@ -75,11 +74,12 @@ public class ChessBoardManagerClone
         {
             if (piece != null)
             {
-                    result.Add(piece);
+                result.Add(piece);
             }
 
         }
         return result;
     }
+
 }
 

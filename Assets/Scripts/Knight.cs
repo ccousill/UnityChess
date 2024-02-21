@@ -13,9 +13,8 @@ public class Knight : Piece
         pieceValue = value;
     }
     //finds the legal spots to move on current knight
-    public override Vector2Int[] FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots(ChessBoardManager board)
     {
-        ChessBoardManager board = GameManager.Instance.ChessBoard;
         List<Vector2Int> moves = new List<Vector2Int>();
         int xPiecePosition = CurrentPosition.x;
         int yPiecePosition = CurrentPosition.y;

@@ -12,10 +12,11 @@ public class Pawn : Piece
     }
 
     //finds the legal spots to move on current pawn
-    public override Vector2Int[] FindAvailableSpots()
+    public override Vector2Int[] FindAvailableSpots(ChessBoardManager board)
     {
-        ChessBoardManager board = GameManager.Instance.ChessBoard;
+        
         Piece[,] pieces = board.GetPieceBoard();
+        Debug.Log(pieces);
         int forwardDirection = (PieceColor == Color.white) ? 1 : -1;
         List<Vector2Int> moves = new List<Vector2Int>();
         Vector2Int forwardOne = new Vector2Int(CurrentPosition.x, CurrentPosition.y + forwardDirection);

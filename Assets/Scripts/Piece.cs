@@ -17,7 +17,7 @@ public abstract class Piece : MonoBehaviour
     private Vector2Int currentPosition;
     private Vector2Int initialPosition;
 
-    public abstract Vector2Int[] FindAvailableSpots();
+    public abstract Vector2Int[] FindAvailableSpots(ChessBoardManager board);
     public Color PieceColor => pieceColor;
     public bool HasMoved => hasMoved;
     public Vector2Int InitialPosition => initialPosition;
@@ -41,7 +41,6 @@ public abstract class Piece : MonoBehaviour
     }
     public int pieceValue;
 
-
     //initialize Pieces position
     public Piece()
     {
@@ -62,7 +61,6 @@ public abstract class Piece : MonoBehaviour
 
         if (Owner == null)
         {
-            Debug.Log("DAmn");
             for (int i = 0; i < transform.childCount; i++)
             {
                 childMeshRenderer.Add(transform.GetChild(i).GetComponent<MeshRenderer>());
@@ -171,6 +169,10 @@ public abstract class Piece : MonoBehaviour
         newPieceObject.pieceColor = this.PieceColor;
         newPieceObject.gameObject.SetActive(false);
         return newPieceObject;
+    }
+
+    public void DestroyPiece(){
+        Destroy(gameObject);
     }
 
 }

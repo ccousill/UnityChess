@@ -12,8 +12,7 @@ public class Bishop : Piece
     }
 
     //finds the legal spots to move on current Bishop
-    public override Vector2Int[] FindAvailableSpots(){
-        ChessBoardManager board = GameManager.Instance.ChessBoard;
+    public override Vector2Int[] FindAvailableSpots(ChessBoardManager board){
         List<Vector2Int> moves = new List<Vector2Int>();
         int xPiecePosition = CurrentPosition.x;
         int yPiecePosition = CurrentPosition.y;
