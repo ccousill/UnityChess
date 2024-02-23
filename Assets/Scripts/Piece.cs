@@ -112,6 +112,7 @@ public abstract class Piece : MonoBehaviour
         else
         {
             transform.position -= new Vector3(0, .5f, 0);
+        
         }
     }
 
@@ -120,6 +121,7 @@ public abstract class Piece : MonoBehaviour
     {
         if (transform.parent.parent.tag == "Black" || (Owner != null && Owner.PlayerColor == "Black"))
         {
+            
             pieceColor = Color.black;
             for (int i = 0; i < transform.childCount; i++)
             {
@@ -159,15 +161,16 @@ public abstract class Piece : MonoBehaviour
         }
     }
 
-    public Piece Clone()
+    public Piece Clone(ChessBoardManager board)
     {
         Piece newPieceObject = Instantiate(this);
-        newPieceObject.transform.SetParent(transform.parent.parent);
+        newPieceObject.gameObject.SetActive(false);
+        newPieceObject.transform.parent = board.transform;
         newPieceObject.Owner = Owner;
         newPieceObject.CurrentPosition = currentPosition;
         newPieceObject.pieceValue = pieceValue;
         newPieceObject.pieceColor = this.PieceColor;
-        newPieceObject.gameObject.SetActive(false);
+        
         return newPieceObject;
     }
 

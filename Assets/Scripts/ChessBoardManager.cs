@@ -32,17 +32,16 @@ public class ChessBoardManager : MonoBehaviour
     public ChessBoardManager CloneChessBoardManager()
     {
         ChessBoardManager cloneObject = Instantiate(this);
-        Piece[,] originalChessboard = pieceBoard;
-        cloneObject.tempBoard = true;
         cloneObject.gameObject.SetActive(false);
+        cloneObject.tempBoard = true;
         cloneObject.enPassantablePiece = enPassantablePiece;
         for (int x = 0; x < BoardSize; x++)
         {
             for (int y = 0; y < BoardSize; y++)
             {
-                if (originalChessboard[x, y] != null)
+                if (pieceBoard[x, y] != null)
                 {
-                    Piece clonedPiece = originalChessboard[x, y].Clone();
+                    Piece clonedPiece = pieceBoard[x, y].Clone(cloneObject);
                     cloneObject.pieceBoard[x, y] = clonedPiece;
                 }
             }
@@ -231,16 +230,16 @@ public class ChessBoardManager : MonoBehaviour
     }
 
     public void DestroyBoard(){
-        for (int x = 0; x < BoardSize; x++)
-        {
-            for (int y = 0; y < BoardSize; y++)
-            {
-                if (pieceBoard[x, y] != null)
-                {
-                   pieceBoard[x,y].DestroyPiece();
-                }
-            }
-        }
+        // for (int x = 0; x < BoardSize; x++)
+        // {
+        //     for (int y = 0; y < BoardSize; y++)
+        //     {
+        //         if (pieceBoard[x, y] != null)
+        //         {
+        //            pieceBoard[x,y].DestroyPiece();
+        //         }
+        //     }
+        // }
         Destroy(gameObject);
     }
 }

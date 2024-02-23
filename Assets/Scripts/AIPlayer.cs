@@ -8,8 +8,12 @@ public class AIPlayer : MonoBehaviour
 {
     public Piece bestPiece;
     public Vector2Int bestMove;
-    public void makeAIMove(ChessBoardManager chessBoard)
+    private ChessBoardManager chessBoard;
+    private Piece[,] pieceBoard;
+    public void makeAIMove()
     {
+        chessBoard = GameManager.Instance.ChessBoard;
+        pieceBoard = chessBoard.GetPieceBoard();
         bestPiece = null;
         bestMove = new Vector2Int();
         Tuple<Piece, Vector2Int> result = getPieceAndDestinationLocation(chessBoard);
@@ -29,13 +33,15 @@ public class AIPlayer : MonoBehaviour
         {
             return Tuple.Create((Piece)null, new Vector2Int(-1, -1));
         }
+
+        Tuple<Piece, Vector2Int> result = null;
         ChessBoardManager gameState = chessBoard.CloneChessBoardManager();
-        Tuple<Piece, Vector2Int> result = minimax(gameState, 1, true, null, new Vector2Int());
+        result = minimax(gameState, int.MinValue + 1, int.MaxValue - 1, 3, true, null, new Vector2Int());
         gameState.DestroyBoard();
         return result;
     }
 
-    private Tuple<Piece, Vector2Int> minimax(ChessBoardManager gameState, int depth, bool maximizingPlayer, Piece bestPiece, Vector2Int bestMove)
+    private Tuple<Piece, Vector2Int> minimax(ChessBoardManager gameState, int alpha, int beta, int depth, bool maximizingPlayer, Piece bestPiece, Vector2Int bestMove)
     {
         if (depth == 0)
         {
@@ -47,30 +53,50 @@ public class AIPlayer : MonoBehaviour
         List<Piece> currentPlayersPieces = maximizingPlayer
             ? gameState.getPlayersPieces(GameManager.Instance.GetCurrentPlayer())
             : gameState.getPlayersPieces(GameManager.Instance.GetOtherPlayer());
+        string currentPlayerColor = GameManager.Instance.GetCurrentPlayer().PlayerColor;
 
         foreach (Piece playerPiece in currentPlayersPieces)
         {
             Vector2Int[] currentAvailableMoves = playerPiece.FindAvailableSpots(gameState);
+            string moves = currentAvailableMoves.ToString();
             int currentX = playerPiece.CurrentPosition.x;
             int currentY = playerPiece.CurrentPosition.y;
+            
+            Piece pieceToMove = pieceBoard[currentX, currentY];
             foreach (Vector2Int destination in currentAvailableMoves)
             {
                 ChessBoardManager childState = gameState.CloneChessBoardManager();
-                Piece currentPiece = childState.GetPieceBoard()[currentX,currentY];
-                childState.UpdateBoard(currentPiece, destination);
-                Tuple<Piece, Vector2Int> result = minimax(childState, depth - 1, !maximizingPlayer, bestPiece, bestMove);
-                Debug.Log(childState.GetPieceBoard()[0, 4] + " " + childState.GetPieceBoard()[0, 5]);
+                Piece currentPieceInGameState = childState.GetPieceBoard()[currentX, currentY];
+                childState.UpdateBoard(currentPieceInGameState, destination);
+                Tuple<Piece, Vector2Int> result = minimax(childState, alpha, beta, depth - 1, !maximizingPlayer, bestPiece, bestMove);
                 int eval = Evaluate(childState);
-
-                Debug.Log(playerPiece + " " + eval);
-                if ((maximizingPlayer && eval > bestEval) || (!maximizingPlayer && eval < bestEval))
+                if (maximizingPlayer)
                 {
-                    ChessBoardManager chessBoard = GameManager.Instance.ChessBoard;
-                    Piece[,] pieceBoard = chessBoard.GetPieceBoard();
-                    bestEval = eval;
-                    bestPiece = pieceBoard[currentX, currentY];
-                    bestMove = destination;
+                    if (eval > bestEval)
+                    {
+                        bestEval = eval;
+                        bestPiece = pieceToMove;
+                        bestMove = destination;
+                    }
+                    alpha = Mathf.Max(alpha, eval);
                 }
+                else
+                {
+                    if (eval < bestEval)
+                    {
+                        bestEval = eval;
+                        bestPiece = pieceToMove;
+                        bestMove = destination;
+                    }
+                    beta = Mathf.Min(beta, eval);
+                }
+
+                if (beta <= alpha)
+                {
+                    childState.DestroyBoard();
+                    return Tuple.Create(bestPiece, bestMove);
+                }
+
                 childState.DestroyBoard();
             }
         }
@@ -80,30 +106,20 @@ public class AIPlayer : MonoBehaviour
 
     private int Evaluate(ChessBoardManager gameState)
     {
-        int materialAdvantage = CalculateMaterialAdvantage(gameState);
-        return materialAdvantage;
-    }
-
-    private int CalculateMaterialAdvantage(ChessBoardManager gameState)
-    {
         int whiteMaterial = 0;
         int blackMaterial = 0;
-
-        foreach (Piece piece in gameState.getAllPlayersPieces())
+        List<Piece> allPieces = gameState.getAllPlayersPieces();
+        foreach (Piece piece in allPieces)
         {
-            Debug.Log(piece + " " + piece.Owner.PlayerColor + " " + piece.CurrentPosition);
-                if (piece.Owner == GameManager.Instance.Players[0])
-                {
-                    whiteMaterial += piece.pieceValue;
-                }
-                else
-                {
-                    blackMaterial += piece.pieceValue;
-                }
+            if (piece.Owner == GameManager.Instance.Players[0])
+            {
+                whiteMaterial += piece.pieceValue;
+            }
+            else
+            {
+                blackMaterial += piece.pieceValue;
+            }
         }
-
-        Debug.Log(whiteMaterial);
-        Debug.Log(blackMaterial);
         return blackMaterial - whiteMaterial;
     }
 }

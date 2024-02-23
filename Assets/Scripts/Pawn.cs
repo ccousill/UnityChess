@@ -16,7 +16,6 @@ public class Pawn : Piece
     {
         
         Piece[,] pieces = board.GetPieceBoard();
-        Debug.Log(pieces);
         int forwardDirection = (PieceColor == Color.white) ? 1 : -1;
         List<Vector2Int> moves = new List<Vector2Int>();
         Vector2Int forwardOne = new Vector2Int(CurrentPosition.x, CurrentPosition.y + forwardDirection);

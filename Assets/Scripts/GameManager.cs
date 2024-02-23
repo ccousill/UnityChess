@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
         if (currentPlayer.PlayerColor == "Black")
         {
             Debug.Log("AIs Turn!");
-            AI.makeAIMove(chessBoard);
+            AI.makeAIMove();
         }
         else
         {
