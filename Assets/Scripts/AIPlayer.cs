@@ -10,6 +10,83 @@ public class AIPlayer : MonoBehaviour
     public Vector2Int bestMove;
     private ChessBoardManager chessBoard;
     private Piece[,] pieceBoard;
+
+    public static class BoardConstants
+    {
+        public static readonly int[,] PawnTable =
+        {
+            {8,8,8,8,8,8,8,8},
+            {6,6,6,6,6,6,6,6},
+            {4,4,4,4,4,4,4,4},
+            {2,2,2,2,2,2,2,2},
+            {0,0,0,0,0,0,0,0},
+            {-2,-2,-2,-2,-2,-2,-2,-2},
+            {-4,-4,-4,-4,-4,-4,-4,-4},
+            {-6,-6,-6,-6,-6,-6,-6,-6}
+};
+
+public static readonly int[,] BishopTable =
+    {
+        {-4, -2, -2, -2, -2, -2, -2, -4},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-2, 0, 2, 2, 2, 2, 0, -2},
+        {-2, 2, 2, 4, 4, 2, 2, -2},
+        {-2, 0, 2, 4, 4, 2, 0, -2},
+        {-2, 2, 0, 0, 0, 0, 2, -2},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-4, -2, -2, -2, -2, -2, -2, -4}
+    };
+
+public static readonly int[,] KnightTable =
+    {
+        {-8, -6, -4, -4, -4, -4, -6, -8},
+        {-6, -2, 0, 0, 0, 0, -2, -6},
+        {-4, 0, 2, 4, 4, 2, 0, -4},
+        {-4, 2, 4, 6, 6, 4, 2, -4},
+        {-4, 0, 4, 6, 6, 4, 0, -4},
+        {-4, 2, 2, 4, 4, 2, 2, -4},
+        {-6, -2, 0, 2, 2, 0, -2, -6},
+        {-8, -6, -4, -4, -4, -4, -6, -8}
+    };
+
+public static readonly int[,] RookTable =
+    {
+        {0, 0, 0, 2, 2, 0, 0, 0},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {2, 2, 2, 2, 2, 2, 2, 2},
+        {0, 0, 0, 0, 0, 0, 0, 0}
+    };
+
+// King table (for general evaluation)
+public static readonly int[,] KingTableGeneral =
+{
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4},
+    {-4, -4, -4, -4, -4, -4, -4, -4}
+};
+
+public static readonly int[,] QueenTable =
+    {
+        {-4, -2, -2, -1, -1, -2, -2, -4},
+        {-2, 0, 0, 0, 0, 0, 0, -2},
+        {-2, 0, 1, 1, 1, 1, 0, -2},
+        {-1, 0, 1, 1, 1, 1, 0, -1},
+        {0, 0, 1, 1, 1, 1, 0, -1},
+        {-2, 1, 1, 1, 1, 1, 0, -2},
+        {-2, 0, 1, 0, 0, 0, 0, -2},
+        {-4, -2, -2, -1, -1, -2, -2, -4}
+    };
+
+    }
     public void makeAIMove()
     {
         chessBoard = GameManager.Instance.ChessBoard;
@@ -36,7 +113,7 @@ public class AIPlayer : MonoBehaviour
 
         Tuple<Piece, Vector2Int> result = null;
         ChessBoardManager gameState = chessBoard.CloneChessBoardManager();
-        result = minimax(gameState, int.MinValue + 1, int.MaxValue - 1, 3, true, null, new Vector2Int());
+        result = minimax(gameState, int.MinValue + 1, int.MaxValue - 1, 1, true, null, new Vector2Int());
         gameState.DestroyBoard();
         return result;
     }
@@ -61,7 +138,7 @@ public class AIPlayer : MonoBehaviour
             string moves = currentAvailableMoves.ToString();
             int currentX = playerPiece.CurrentPosition.x;
             int currentY = playerPiece.CurrentPosition.y;
-            
+
             Piece pieceToMove = pieceBoard[currentX, currentY];
             foreach (Vector2Int destination in currentAvailableMoves)
             {
@@ -93,6 +170,7 @@ public class AIPlayer : MonoBehaviour
 
                 if (beta <= alpha)
                 {
+                    
                     childState.DestroyBoard();
                     return Tuple.Create(bestPiece, bestMove);
                 }
@@ -109,17 +187,36 @@ public class AIPlayer : MonoBehaviour
         int whiteMaterial = 0;
         int blackMaterial = 0;
         List<Piece> allPieces = gameState.getAllPlayersPieces();
+        int pieceSquareValue = 0;
         foreach (Piece piece in allPieces)
         {
+            if(piece is Pawn){
+                pieceSquareValue = BoardConstants.PawnTable[piece.CurrentPosition.x,piece.CurrentPosition.y];
+            }
+            else if(piece is Knight){
+                pieceSquareValue = BoardConstants.KnightTable[piece.CurrentPosition.x,piece.CurrentPosition.y];
+            }
+            else if(piece is Rook){
+                pieceSquareValue = BoardConstants.RookTable[piece.CurrentPosition.x,piece.CurrentPosition.y];
+            }
+            else if(piece is Bishop){
+                pieceSquareValue = BoardConstants.BishopTable[piece.CurrentPosition.x,piece.CurrentPosition.y];
+            }
+            else if(piece is Queen){
+                pieceSquareValue = BoardConstants.QueenTable[piece.CurrentPosition.x,piece.CurrentPosition.y];
+            }
+            else{
+                pieceSquareValue = BoardConstants.KingTableGeneral[piece.CurrentPosition.x,piece.CurrentPosition.y];
+            }
             if (piece.Owner == GameManager.Instance.Players[0])
             {
-                whiteMaterial += piece.pieceValue;
+                whiteMaterial = whiteMaterial + piece.pieceValue + pieceSquareValue;
             }
             else
             {
-                blackMaterial += piece.pieceValue;
+                blackMaterial = blackMaterial + piece.pieceValue + pieceSquareValue;
             }
         }
-        return blackMaterial - whiteMaterial;
+        return whiteMaterial + blackMaterial;
     }
 }
